@@ -72,7 +72,7 @@
 
   system.stateVersion = "26.05"; 
   
-  fonts.packages = with packages [
+  fonts.packages = with pkgs; [
       nerd-fonts.jetbrains-mono
   ];
 

@@ -11,11 +11,11 @@
 
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }:
+  outputs = { self, nixpkgs, home-manager, ... }: {
       nixosConfigurations.nixos-vm = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
 	  modules = [ 
-              ./configuration.nix 
+              ./configuration.nix
 	      home-manager.nixosModules.home-manager
 	      {
 	          home-manager = {
@@ -24,8 +24,9 @@
                       users.marc = import ./home.nix;
 		      backupFileExtension = "backup"; # when downloading a .config-file, and this .configfile already exists, instead of crashing it moves file to backup-directory
 		  };
-	      };
+	      }
 	  ];
       };
+  };
 
 }
