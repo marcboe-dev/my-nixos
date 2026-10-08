@@ -1,38 +1,52 @@
 { config, pkgs, ... }:
 
+let
+  dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
+  create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
+
+  # Standard .config/directory
+  configs = {
+    qtile = "qtile";
+    nvim = "nvim";
+    # rofi = "rofi";
+    alacritty = "alacritty";
+    picom = "picom";
+  };
+in
+
 {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
   home.username = "marc";
   home.homeDirectory = "/home/marc";
-
-  # git-config declarative
-  programs.git = {
-    enable = true;
-    settings = {
-      user.name = "Marc";
-      user.email = "marc.boehme186@gmail.com";
-      init.defaultBranch = "main";
-      };
-  };
-
+  programs.git.enable = true;
+  home.stateVersion = "26.05";
   programs.bash = {
     enable = true;
     shellAliases = {
-      btw = "echo I use nixos, btw";
+      btw = "echo i use nixos-btw";
+      nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles#nixos-btw";
     };
+    initExtra = ''
+      	  export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
+      	'';
   };
 
-  home.stateVersion = "26.05"; # Please read the comment before changing.
+  xdg.configFile = builtins.mapAttrs
+    (name: subpath: {
+      source = create_symlink "${dotfiles}/${subpath}";
+      recursive = true;
+    })
+    configs;
 
-  home.packages = [
+  home.packages = with pkgs; [
+    neovim
+    ripgrep
+    nil
+    nixpkgs-fmt
+    nodejs
+    gcc
+    rofi
+    xwallpaper
   ];
-
-  home.file = {
-  };
-
-  home.sessionVariables = {
-  };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 }

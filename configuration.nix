@@ -29,14 +29,35 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  services.displayManager.gdm.enable = true;
   services.desktopManager.gnome.enable = true;
 
-  # Configure keymap in X11
-  services.xserver.xkb = {
-    layout = "at";
-    variant = "";
+  services.displayManager.ly.enable = true;
+
+  services.xserver = {
+  enable = true;
+  autoRepeatDelay = 200;
+  autoRepeatInterval = 35;
+  windowManager.qtile.enable = true;
+  displayManager.sessionCommands = ''
+  xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
+  '';
+  xkb = {
+  layout = "at";
+  variant = "";
   };
+  extraConfig = ''
+    Section "Monitor"
+      Identifier "Virtual-1"
+      Option "PreferredMode" "1920x1080"
+    EndSection
+  '';
+  };
+
+  # Configure keymap in X11
+  # services.xserver.xkb = {
+  #   layout = "at";
+  #   variant = "";
+  # };
 
   services.printing.enable = true;
 
@@ -57,10 +78,8 @@
     ];
   };
 
-  # Install firefox.
   programs.firefox.enable = true;
 
-  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs; [
@@ -68,6 +87,7 @@
      wget
      git
      wl-clipboard
+     alacritty
     ];
 
   system.stateVersion = "26.05"; 
