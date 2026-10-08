@@ -82,6 +82,18 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  
+  # Workaround: nixpkgs baut qtile 0.37.1 gegen wlroots 0.19, braucht aber 0.20
+  nixpkgs.overlays = [
+    (final: prev: {
+      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+        (pyfinal: pyprev: {
+          qtile = pyprev.qtile.override { wlroots = final.wlroots_0_20; };
+        })
+      ];
+    })
+  ];
+
   environment.systemPackages = with pkgs; [
      neovim 
      wget
