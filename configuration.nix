@@ -29,7 +29,7 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  services.desktopManager.gnome.enable = true;
+  # services.desktopManager.gnome.enable = true;
 
   services.displayManager.ly.enable = true;
 
@@ -86,7 +86,7 @@
      neovim 
      wget
      git
-     wl-clipboard
+     # wl-clipboard
      alacritty
     ];
 
