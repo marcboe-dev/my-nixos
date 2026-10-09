@@ -8,7 +8,7 @@ let
   configs = {
     qtile = "qtile";
     nvim = "nvim";
-    # rofi = "rofi";
+    rofi = "rofi";
     alacritty = "alacritty";
     picom = "picom";
   };
@@ -46,7 +46,20 @@ in
     gcc
     rofi
     xwallpaper
+    xclip
+    maim #screenshots
   ];
+
+  programs.git = {
+    settings = {
+      user.name  = "marc";            # anpassen
+      user.email = "marc.boehme186@example.com";   # anpassen
+      init.defaultBranch = "main";
+      pull.rebase = true;
+      push.autoSetupRemote = true;
+      core.editor = "nvim";
+    };
+  };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 }

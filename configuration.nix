@@ -111,4 +111,15 @@
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
   virtualisation.vmware.guest.enable = true; # copying from host to vm
+
+  # Caps Lock: click once = Esc, hold = Ctrl
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings.main = {
+        capslock = "overload(control, esc)";
+      };
+    };
+  };
 }
