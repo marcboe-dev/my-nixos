@@ -255,7 +255,8 @@ screens = [
                     mouse_callbacks={
                         'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e upower -i $(upower -e | grep BAT)'),
                     },
-                ) if os.path.exists("/sys/class/power_supply/BAT0") else widget.Spacer(length=0),
+                ) if os.path.exists("/sys/class/power_supply/BAT0") else widget.Spacer(length=0), 
+                sep if os.path.exists("/sys/class/power_supply/BAT0") else widget.Spacer(length=0),#if Battery exists put "|"; otherwise dont
                 widget.Volume(
                     foreground = colors[7],
                     padding = 8, 

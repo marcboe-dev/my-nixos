@@ -15,6 +15,11 @@ let
 in
 
 {
+
+  imports = [
+    ./apps
+  ];
+
   home.username = "marc";
   home.homeDirectory = "/home/marc";
   programs.git.enable = true;
