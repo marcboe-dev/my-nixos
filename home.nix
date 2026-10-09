@@ -11,6 +11,7 @@ let
     rofi = "rofi";
     alacritty = "alacritty";
     picom = "picom";
+    tmux = "tmux";
   };
 in
 
@@ -69,6 +70,8 @@ in
   };
 
   programs.lazygit.enable = true;
+  programs.tmux.enable = true;
+
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 }
