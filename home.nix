@@ -48,12 +48,13 @@ in
     xwallpaper
     xclip
     maim #screenshots
+    alsa-utils #advanced linux sound architecture
   ];
 
   programs.git = {
     settings = {
-      user.name  = "marc";            # anpassen
-      user.email = "marc.boehme186@example.com";   # anpassen
+      user.name  = "marc";            
+      user.email = "marc.boehme186@example.com";   
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;

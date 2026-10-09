@@ -236,7 +236,7 @@ screens = [
                     padding = 8, 
                     mouse_callbacks = {'Button1': lambda: qtile.cmd_spawn('notify-disk')},
                     partition = '/',
-                    format = '{uf}{m} free',
+                    format = '{uf:.1f}{m} free',
                     fmt = 'Disk: {}',
                     visible_on_warn = False,
                 ),
@@ -255,8 +255,7 @@ screens = [
                     mouse_callbacks={
                         'Button1': lambda: qtile.cmd_spawn(myTerm + ' -e upower -i $(upower -e | grep BAT)'),
                     },
-                ),
-                sep,
+                ) if os.path.exists("/sys/class/power_supply/BAT0") else widget.Spacer(length=0),
                 widget.Volume(
                     foreground = colors[7],
                     padding = 8, 

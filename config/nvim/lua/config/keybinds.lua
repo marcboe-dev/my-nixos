@@ -60,8 +60,3 @@ vim.keymap.set("n", "<leader>li", ":checkhealth vim.lsp<CR>", { desc = "LSP Info
 
 -- run make in current working directory
 vim.keymap.set("n", "<leader>mm", "<cmd>make<CR>")
-
--- source file
-vim.keymap.set("n", "<leader><leader>", function()
-    vim.cmd("so")
-end)
