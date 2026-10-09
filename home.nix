@@ -56,6 +56,7 @@ in
     xclip
     maim #screenshots
     alsa-utils #advanced linux sound architecture
+    tmux
   ];
 
   programs.git = {
@@ -70,7 +71,6 @@ in
   };
 
   programs.lazygit.enable = true;
-  programs.tmux.enable = true;
 
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
