@@ -19,6 +19,7 @@
 
     commandLineArgs = [
       "--enable-accelerated-video-decode"
+      "--force-dark-mode"
     ];
   };
 
