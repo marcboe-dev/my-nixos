@@ -60,3 +60,7 @@ vim.keymap.set("n", "<leader>li", ":checkhealth vim.lsp<CR>", { desc = "LSP Info
 
 -- run make in current working directory
 vim.keymap.set("n", "<leader>mm", "<cmd>make<CR>")
+
+-- change (c/C) without writing to register
+vim.keymap.set({ "n", "x" }, "c", [["_c]])
+vim.keymap.set({ "n", "x" }, "C", [["_C]])
