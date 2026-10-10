@@ -1,10 +1,9 @@
-Ja, das macht Sinn. Ich würde aber nicht nach einzelnen Programmen sortieren, sondern nach Art: GUI-Apps in einen Ordner, CLI-Tools in einen anderen. Jeder Ordner bekommt eine `default.nix`, die alles darin einbindet. So bleibt deine `home.nix` kurz, und für ein neues Programm legst du nur eine Datei an und fügst eine Zeile hinzu. Libre und Felix machen es ähnlich.
 
 **Vorschlag für die Struktur:**
 
 ```
-nixos-config/
 ├── flake.nix
+nixos-config/
 ├── hosts/
 │   ├── vm/                  # VMware Workstation Pro
 │   │   ├── configuration.nix
@@ -67,5 +66,3 @@ Bevor du Obsidian und Google Drive angehst, solltest du zwei Dinge wissen:
 
 - **Obsidian ist unfree.** Du brauchst `nixpkgs.config.allowUnfree = true;`. Am saubersten setzt du das zentral in der `flake.nix`.
 - **Google Drive hat keinen offiziellen Linux-Client.** Die üblichen Wege unter NixOS sind `rclone` mit Mount als systemd-User-Service (deklarativ und kostenlos) oder `insync` (unfree und kostenpflichtig). Ich würde `rclone` nehmen. Der Login per OAuth bleibt aber einmalig ein manueller Schritt, der sich nicht vollständig reproduzieren lässt.
-
-Soll ich als Nächstes `obsidian.nix` oder `google-drive.nix` mit rclone ausarbeiten?
