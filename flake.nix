@@ -12,6 +12,7 @@
 
     outputs = { self, nixpkgs, home-manager, ... }:
   let
+    pkgs = nixpkgs.legacyPackages.x86_6;
     # Funktion: bekommt einen Host-Ordner, gibt ein komplettes System zurück
     mkHost = hostDir: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
@@ -34,6 +35,17 @@
       nixos-vm = mkHost ./hosts/vm;
       nixos-laptop = mkHost ./hosts/laptop;
     };
+
+    apps.x86_64-linux.default = {
+      type = "app";
+      program = "${pkgs.writeShellApplication {
+        name = "install";
+        runtimeInputs = [ pkgs.git ];
+        text = builtins.readFile ./install.sh;
+      }}/bin/install";
+    };
+
+    
   };
 
 }
