@@ -43,12 +43,6 @@
   layout = "at";
   variant = "";
   };
-  extraConfig = ''
-    Section "Monitor"
-      Identifier "Virtual-1"
-      Option "PreferredMode" "1920x1080"
-    EndSection
-  '';
   };
 
   # Configure keymap in X11
@@ -72,8 +66,6 @@
     isNormalUser = true;
     description = "marc";
     extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-    ];
   };
 
   programs.firefox.enable = true;
@@ -107,8 +99,6 @@
   ];
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-  virtualisation.vmware.guest.enable = true; # copying from host to vm
 
   # Caps Lock: click once = Esc, hold = Ctrl
   services.keyd = {

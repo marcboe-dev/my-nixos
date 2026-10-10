@@ -107,4 +107,14 @@ in
       }
     ];
   };
+
+  services.libinput = {
+    enable = true;
+    touchpad = {
+      naturalScrolling = true;
+      tapping = true;
+    };
+  };
+
+  services.xserver.dpi = 120;   # 96 = 100 %, 120 = 125 %, 144 = 150 %
 }
