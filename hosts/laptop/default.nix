@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 let
   # ── Hier deine Werte eintragen ─────────────────────────────
@@ -90,5 +90,21 @@ in
         config.eDP-1 = laptopScreen;
       };
     };
+  };
+
+  environment.systemPackages = [ pkgs.pavucontrol pkgs.brightnessctl];
+
+    # Soundprofil mit Laptop-Lautsprechern festlegen
+  services.pipewire.wireplumber.extraConfig."51-laptop-speaker" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [
+          { "device.name" = "alsa_card.pci-0000_00_1f.3-platform-skl_hda_dsp_generic"; }
+        ];
+        actions.update-props = {
+          "device.profile" = "HiFi (HDMI1, HDMI2, HDMI3, Mic1, Mic2, Speaker)";
+        };
+      }
+    ];
   };
 }

@@ -65,6 +65,28 @@ keys = [
         lazy.spawn('sh -c "maim -s | xclip -selection clipboard -t image/png -i"'),
         desc="Screenshot"
     ),
+
+    # Lautstärke
+    Key([], "XF86AudioRaiseVolume",
+        lazy.spawn("wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+"),
+        desc="Lauter"),
+    Key([], "XF86AudioLowerVolume",
+        lazy.spawn("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
+        desc="Leiser"),
+    Key([], "XF86AudioMute",
+        lazy.spawn("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),
+        desc="Ton stumm"),
+    Key([], "XF86AudioMicMute",
+        lazy.spawn("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
+        desc="Mikrofon stumm"),
+
+    # Bildschirmhelligkeit
+    Key([], "XF86MonBrightnessUp",
+        lazy.spawn("brightnessctl set 5%+"),
+        desc="Heller"),
+    Key([], "XF86MonBrightnessDown",
+        lazy.spawn("brightnessctl --min-value=1 set 5%-"),
+        desc="Dunkler"),
 ]
 
 # Add key bindings to switch VTs in Wayland.
