@@ -12,7 +12,7 @@
 
     outputs = { self, nixpkgs, home-manager, ... }:
   let
-    pkgs = nixpkgs.legacyPackages.x86_6;
+    pkgs = nixpkgs.legacyPackages.x86_64-linux;
     # Funktion: bekommt einen Host-Ordner, gibt ein komplettes System zurück
     mkHost = hostDir: nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
