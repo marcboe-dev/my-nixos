@@ -6,7 +6,7 @@ case "$HOST" in
   *) echo "Unbekannter Host: $HOST"; exit 1 ;;
 esac
 
-DIR="$HOME/my-nixos"
+DIR="$HOME/nixos-dotfiles"
 [ -d "$DIR" ] || git clone https://github.com/marcboe-dev/my-nixos.git "$DIR"
 cd "$DIR"
 
