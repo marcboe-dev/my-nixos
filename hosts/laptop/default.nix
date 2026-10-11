@@ -51,6 +51,7 @@ in
   services.logind.settings.Login = {
     HandleLidSwitchDocked = "ignore";
     HandleLidSwitch = "suspend";
+    HandleLidSwitchExternalPower = "ignore";
   };
 
   # autorandr beim Auf- und Zuklappen auslösen (über den Dienst, kein Doppellauf)

@@ -347,3 +347,16 @@ wl_xcursor_theme = None
 wl_xcursor_size = 24
 
 wmname = "LG3D"
+
+# Nach Zu-/Aufklappen: Gruppen, die auf keinem echten Bildschirm mehr
+# angezeigt werden, freigeben. qtile vergleicht Bildschirme nur über den
+# Anschlussnamen und lässt sie sonst an alten Bildschirmen hängen.
+@hook.subscribe.screens_reconfigured
+def _release_orphaned_groups():
+    for group in qtile.groups:
+        owner = next((s for s in qtile.screens if s.group is group), None)
+        if owner is None:
+            if group.screen is not None:
+                group.hide()
+        elif group.screen is not owner:
+            group.screen = owner
