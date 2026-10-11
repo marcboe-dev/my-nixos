@@ -92,7 +92,11 @@ in
     };
   };
 
-  environment.systemPackages = [ pkgs.pavucontrol pkgs.brightnessctl];
+  environment.systemPackages = [ 
+    pkgs.pavucontrol #grafischer Audio-Manager
+    pkgs.brightnessctl 
+    pkgs.overskride #grafischer Bluetooth-Manager
+  ];
 
     # Soundprofil mit Laptop-Lautsprechern festlegen
   services.pipewire.wireplumber.extraConfig."51-laptop-speaker" = {
@@ -113,8 +117,21 @@ in
     touchpad = {
       naturalScrolling = true;
       tapping = true;
+      horizontalScrolling = false;
     };
   };
 
   services.xserver.dpi = 120;   # 96 = 100 %, 120 = 125 %, 144 = 150 %
+
+  # Kein ruckeln
+  services.xserver.videoDrivers = [ "modesetting" ];
+  services.xserver.deviceSection = ''
+    Option "TearFree" "true"
+  '';
+
+  # Bluetooth + grafischer Manager (Blueman)
+  hardware.bluetooth = {
+    enable = true;
+    powerOnBoot = true;
+  };
 }

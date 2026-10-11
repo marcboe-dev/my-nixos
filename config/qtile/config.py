@@ -147,7 +147,7 @@ def C(x): return x[0] if isinstance(x, (list, tuple)) else x
 
 layout_theme = {
     "border_width" : 1,
-    "margin" : 1,
+    "margin" : 0,
     "border_focus" : colors[6],
     "border_normal" : colors[0],
 }
@@ -161,11 +161,7 @@ layouts = [
     # layout.Matrix(),
     layout.MonadTall(**layout_theme),
     # layout.MonadWide(),
-    # layout.RatioTile(),
-    # layout.Tile(),
-    # layout.TreeTab(),
-    # layout.VerticalTile(),
-    # layout.Zoomy(),
+    # ...
 ]
 
 widget_defaults = dict(

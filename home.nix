@@ -57,7 +57,9 @@ in
     maim #screenshots
     alsa-utils #advanced linux sound architecture
     tmux
+    btop
     obsidian
+    signal-desktop
   ];
 
   programs.git = {
@@ -74,7 +76,6 @@ in
   programs.lazygit.enable = true;
   programs.zoxide.enable = true;
   programs.fzf.enable = true;
-
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 
