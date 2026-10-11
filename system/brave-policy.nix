@@ -23,6 +23,14 @@
     SpellcheckEnabled        = true;
     SpellcheckLanguage       = [ "de-AT" "en-US" ];
 
+    # --- Suchmaschine: DuckDuckGo ---          
+    DefaultSearchProviderEnabled    = true;
+    DefaultSearchProviderName       = "DuckDuckGo";
+    DefaultSearchProviderKeyword    = "ddg";
+    DefaultSearchProviderSearchURL  = "https://duckduckgo.com/?q={searchTerms}";
+    DefaultSearchProviderSuggestURL = "https://duckduckgo.com/ac/?q={searchTerms}&type=list";
+    DefaultSearchProviderIconURL    = "https://duckduckgo.com/favicon.ico";
+
     # no Brave PW-Manager
     PasswordManagerEnabled = false;
 
