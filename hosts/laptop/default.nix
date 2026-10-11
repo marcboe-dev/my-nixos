@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 
 let
   # ── Hier deine Werte eintragen ─────────────────────────────
@@ -21,6 +21,21 @@ let
     mode = "1920x1080";
     position = "1920x0";   # rechts neben dem Laptop
   };
+
+   # picom-Config mit Animation gegen das Aufblitzen beim Gruppenwechsel
+   picomConf = pkgs.writeText "picom.conf" ''
+     backend = "glx";
+     vsync = true;
+     use-damage = false;
+     xrender-sync-fence = true;
+
+     animations = (
+       {
+         triggers = [ "hide" ];
+         opacity = { duration = 0.04; start = 1; end = 1; };
+       }
+     );
+   '';
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -123,11 +138,10 @@ in
 
   services.xserver.dpi = 120;   # 96 = 100 %, 120 = 125 %, 144 = 150 %
 
-  # Kein ruckeln
-  services.xserver.videoDrivers = [ "modesetting" ];
-  services.xserver.deviceSection = ''
-    Option "TearFree" "true"
-  '';
+  # Kein Tearing: picom mit VSync, Config siehe picomConf oben
+  services.picom.enable = true;
+  systemd.user.services.picom.serviceConfig.ExecStart =
+    lib.mkForce "${pkgs.picom}/bin/picom --config ${picomConf}";
 
   # Bluetooth + grafischer Manager (Blueman)
   hardware.bluetooth = {

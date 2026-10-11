@@ -60,9 +60,9 @@ keys = [
         Key([], "b", lazy.spawn("rofi-bookmarks"), desc="Bookmarks"),
     ], name="rofi"),
     Key(
-        [mod], 
+        [mod],
         "s",
-        lazy.spawn('sh -c "maim -s | xclip -selection clipboard -t image/png -i"'),
+        lazy.spawn("flameshot gui"),
         desc="Screenshot"
     ),
 

@@ -10,7 +10,6 @@ let
     nvim = "nvim";
     rofi = "rofi";
     alacritty = "alacritty";
-    picom = "picom";
     tmux = "tmux";
   };
 in
@@ -76,6 +75,14 @@ in
   programs.lazygit.enable = true;
   programs.zoxide.enable = true;
   programs.fzf.enable = true;
+
+  services.flameshot = {
+    enable = true;
+    settings.General = {
+      showStartupLaunchMessage = false;
+      disabledTrayIcon = true;
+    };
+  };
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 
