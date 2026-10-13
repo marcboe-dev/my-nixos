@@ -62,10 +62,16 @@
     pulse.enable = true;
   };
 
+  users.groups.nordvpn = {};
+
   users.users."marc" = {
     isNormalUser = true;
     description = "marc";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [ 
+    "networkmanager" 
+    "wheel" 
+    "nordvpn"
+    ];
   };
 
   programs.firefox.enable = true;

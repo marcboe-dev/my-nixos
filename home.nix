@@ -81,6 +81,7 @@ in
     settings.General = {
       showStartupLaunchMessage = false;
       disabledTrayIcon = true;
+      useX11LegacyScreenshot = true;
     };
   };
 

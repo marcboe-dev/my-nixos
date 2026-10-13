@@ -112,6 +112,7 @@ in
     pkgs.pavucontrol #grafischer Audio-Manager
     pkgs.brightnessctl 
     pkgs.overskride #grafischer Bluetooth-Manager
+    pkgs.nordvpn
   ];
 
     # Soundprofil mit Laptop-Lautsprechern festlegen
@@ -148,5 +149,24 @@ in
   hardware.bluetooth = {
     enable = true;
     powerOnBoot = true;
+  };
+
+  # Nordvpn Einstellungen
+  systemd.services.nordvpnd = {
+    description = "NordVPN daemon";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      ExecStart = "${pkgs.nordvpn}/bin/nordvpnd";
+      Restart = "on-failure";
+
+      User = "root";
+      Group = "nordvpn";
+
+      RuntimeDirectory = "nordvpn";
+      RuntimeDirectoryMode = "0770";
+    };
   };
 }
