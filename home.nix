@@ -33,6 +33,12 @@ in
     };
     initExtra = ''
       	  export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
+
+          export EDITOR=nvim
+          export VISUAL=nvim
+
+          export MANPAGER="nvim +Man!"
+          export MANPAGER="sh -c 'col -bx | bat -l man -p'"
       	'';
   };
 
@@ -58,6 +64,7 @@ in
     nixpkgs-fmt
     nodejs
     gcc
+    gnumake
     rofi
     xwallpaper
     xclip
@@ -65,6 +72,9 @@ in
     alsa-utils #advanced linux sound architecture
     tmux
     btop
+    ueberzugpp
+    bat
+
     obsidian
     signal-desktop
     sioyek
@@ -122,6 +132,21 @@ in
 
     settings = {
       mgr.show_hidden = true;
+
+        opener.pdf = [
+    {
+      run = "xdg-open %s";
+      orphan = true;
+      for = "unix";
+    }
+  ];
+
+  open.prepend_rules = [
+    {
+      mime = "application/pdf";
+      use = "pdf";
+    }
+  ];
     };
 
     keymap.mgr.prepend_keymap = [
