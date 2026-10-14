@@ -76,6 +76,8 @@
 
   programs.firefox.enable = true;
 
+  programs.dconf.enable = true; # for gtk-windows to remember their size
+
   nixpkgs.config.allowUnfree = true;
 
   

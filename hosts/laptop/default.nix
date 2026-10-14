@@ -36,6 +36,12 @@ let
        }
      );
    '';
+
+  batteryNotify = pkgs.writeShellApplication {
+    name = "battery-notify";
+    runtimeInputs = [ pkgs.libnotify pkgs.coreutils ];
+    text = builtins.readFile ../../scripts/battery_notify.sh;
+  };
 in
 {
   imports = [ ./hardware-configuration.nix ];
@@ -113,6 +119,7 @@ in
     pkgs.brightnessctl 
     pkgs.overskride #grafischer Bluetooth-Manager
     pkgs.nordvpn
+    pkgs.libnotify
   ];
 
     # Soundprofil mit Laptop-Lautsprechern festlegen
@@ -169,4 +176,19 @@ in
       RuntimeDirectoryMode = "0770";
     };
   };
+
+  # Notification for low battery
+  systemd.user.services.battery-notify = {
+    description = "Battery notifications at 20% and 10%";
+    wantedBy = [ "graphical-session.target" ];
+    after = [ "graphical-session.target" ];
+    serviceConfig = {
+      ExecStart = lib.getExe batteryNotify;
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+  };
+
+  home-manager.users.marc.services.dunst.enable = true;
+
 }

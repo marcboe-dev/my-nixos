@@ -43,6 +43,14 @@ in
     })
     configs;
 
+  # Sioyek as standard for pdf
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "application/pdf" = [ "sioyek.desktop" ];
+    };
+  };
+
   home.packages = with pkgs; [
     neovim
     ripgrep
@@ -59,6 +67,7 @@ in
     btop
     obsidian
     signal-desktop
+    sioyek
   ];
 
   programs.git = {
@@ -96,4 +105,32 @@ in
     [ -s "$f" ] || echo '{}' > "$f"
     ${pkgs.jq}/bin/jq '.frame = "native"' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
   '';
+
+  programs.yazi = {
+    enable = true;
+    enableBashIntegration = true;
+    shellWrapperName = "y";
+
+    plugins = {
+      inherit (pkgs.yaziPlugins) full-border git smart-enter toggle-pane mount;
+    };
+
+    initLua = ''
+      require("full-border"):setup()
+      require("git"):setup()
+    '';
+
+    settings = {
+      mgr.show_hidden = true;
+    };
+
+    keymap.mgr.prepend_keymap = [
+      { on = "<Enter>"; run = "plugin smart-enter"; desc = "Enter dir or open file"; }
+      { on = "l";       run = "plugin smart-enter"; desc = "Enter dir or open file"; }
+      { on = "T";       run = "plugin toggle-pane max-preview"; desc = "Maximize preview"; }
+      { on = "M";       run = "plugin mount"; desc = "Mount manager"; }
+    ];
+  };
+
+
 }
