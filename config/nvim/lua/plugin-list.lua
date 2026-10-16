@@ -5,6 +5,7 @@ return {
     "hrsh7th/cmp-nvim-lsp",
     "hrsh7th/cmp-path",
     "hrsh7th/cmp-buffer",
+    "windwp/nvim-autopairs",
     "nvim-telescope/telescope.nvim",
     { "ThePrimeagen/harpoon", branch = "harpoon2" },
     "folke/tokyonight.nvim",

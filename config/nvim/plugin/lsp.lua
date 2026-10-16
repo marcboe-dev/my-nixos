@@ -3,7 +3,7 @@ vim.lsp.config('*', {
 })
 
 vim.diagnostic.config({
-    virtual_text  = true,
+    virtual_text  = false, -- blende Warnings aus
     severity_sort = true,
     float         = {
         style  = 'minimal',

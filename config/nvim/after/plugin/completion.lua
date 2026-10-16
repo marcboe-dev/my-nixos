@@ -3,11 +3,19 @@ require("cmp_nvim_lsp").setup()
 cmp.register_source("path", require("cmp_path").new())
 cmp.register_source("buffer", require("cmp_buffer"))
 
+-- Autopairs setup
+local autopairs = require("nvim-autopairs")
+autopairs.setup({})
+
+-- Bei Funktionen aus der Completion automatisch "(" ergänzen
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
+
 cmp.setup({
     preselect = cmp.PreselectMode.Item,
     completion = {
         completeopt = "menu,menuone,noinsert",
-        autocomplete = { cmp.TriggerEvent.TextChanged },
+        autocomplete = false,
     },
     window = { documentation = cmp.config.window.bordered() },
     mapping = cmp.mapping.preset.insert({

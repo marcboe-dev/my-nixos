@@ -64,3 +64,9 @@ vim.keymap.set("n", "<leader>mm", "<cmd>make<CR>")
 -- change (c/C) without writing to register
 vim.keymap.set({ "n", "x" }, "c", [["_c]])
 vim.keymap.set({ "n", "x" }, "C", [["_C]])
+
+-- Diagnose-Text im Code ein-/ausblenden
+vim.keymap.set("n", "<leader>td", function()
+    local on = vim.diagnostic.config().virtual_text
+    vim.diagnostic.config({ virtual_text = not on })
+end, { desc = "Toggle diagnostics virtual text" })

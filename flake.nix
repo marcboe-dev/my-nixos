@@ -2,34 +2,38 @@
   description = "NixOS from Scratch";
 
   inputs = {
-      nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-      home-manager = {
-          url = "github:nix-community/home-manager";
-          inputs.nixpkgs.follows = "nixpkgs";# versions nixpkgs & home-manger same
-      };
-
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs"; # versions nixpkgs & home-manger same
+    };
   };
 
-    outputs = { self, nixpkgs, home-manager, ... }:
-  let
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    ...
+  }: let
     pkgs = nixpkgs.legacyPackages.x86_64-linux;
     # Funktion: bekommt einen Host-Ordner, gibt ein komplettes System zurück
-    mkHost = hostDir: nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./configuration.nix   # gemeinsam
-        hostDir               # rechnerspezifisch
-        home-manager.nixosModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.marc = import ./home.nix;
-            backupFileExtension = "backup";
-          };
-        }
-      ];
-    };
+    mkHost = hostDir:
+      nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix # gemeinsam
+          hostDir # rechnerspezifisch
+          home-manager.nixosModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.marc = import ./home.nix;
+              backupFileExtension = "backup";
+            };
+          }
+        ];
+      };
   in {
     nixosConfigurations = {
       nixos-vm = mkHost ./hosts/vm;
@@ -40,12 +44,9 @@
       type = "app";
       program = "${pkgs.writeShellApplication {
         name = "install";
-        runtimeInputs = [ pkgs.git ];
+        runtimeInputs = [pkgs.git];
         text = builtins.readFile ./install.sh;
       }}/bin/install";
     };
-
-    
   };
-
 }

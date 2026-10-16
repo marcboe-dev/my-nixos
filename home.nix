@@ -1,6 +1,9 @@
-{ lib, config, pkgs, ... }:
-
-let
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}: let
   dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
   create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
 
@@ -12,10 +15,7 @@ let
     alacritty = "alacritty";
     tmux = "tmux";
   };
-in
-
-{
-
+in {
   imports = [
     ./apps
   ];
@@ -32,17 +32,18 @@ in
       vi = "nvim";
     };
     initExtra = ''
-      	  export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
+      export PS1="\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
 
-          export EDITOR=nvim
-          export VISUAL=nvim
+       export EDITOR=nvim
+       export VISUAL=nvim
 
-          export MANPAGER="nvim +Man!"
-          export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-      	'';
+       export MANPAGER="nvim +Man!"
+       export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+    '';
   };
 
-  xdg.configFile = builtins.mapAttrs
+  xdg.configFile =
+    builtins.mapAttrs
     (name: subpath: {
       source = create_symlink "${dotfiles}/${subpath}";
       recursive = true;
@@ -53,7 +54,7 @@ in
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "application/pdf" = [ "sioyek.desktop" ];
+      "application/pdf" = ["sioyek.desktop"];
     };
   };
 
@@ -61,7 +62,8 @@ in
     neovim
     ripgrep
     nil
-    nixpkgs-fmt
+    alejandra #ersetzt nixpkgs-fmt
+    clang-tools #clang-d + clang-format
     nodejs
     gcc
     gnumake
@@ -82,8 +84,8 @@ in
 
   programs.git = {
     settings = {
-      user.name  = "marc";            
-      user.email = "marc.boehme186@example.com";   
+      user.name = "marc";
+      user.email = "marc.boehme186@example.com";
       init.defaultBranch = "main";
       pull.rebase = true;
       push.autoSetupRemote = true;
@@ -109,7 +111,7 @@ in
   # Obsidian: setzt bei jedem Rebuild/Boot "frame":"native" in obsidian.json,
   # damit Obsidian unter qtile keinen eigenen Fensterrahmen/Buttons zeichnet.
   # Nur dieser eine Wert wird geändert, die Vault-Liste bleibt erhalten.
-  home.activation.obsidianFrame = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  home.activation.obsidianFrame = lib.hm.dag.entryAfter ["writeBoundary"] ''
     f="$HOME/.config/obsidian/obsidian.json"
     mkdir -p "$(dirname "$f")"
     [ -s "$f" ] || echo '{}' > "$f"
@@ -133,29 +135,43 @@ in
     settings = {
       mgr.show_hidden = true;
 
-        opener.pdf = [
-    {
-      run = "xdg-open %s";
-      orphan = true;
-      for = "unix";
-    }
-  ];
+      opener.pdf = [
+        {
+          run = "xdg-open %s";
+          orphan = true;
+          for = "unix";
+        }
+      ];
 
-  open.prepend_rules = [
-    {
-      mime = "application/pdf";
-      use = "pdf";
-    }
-  ];
+      open.prepend_rules = [
+        {
+          mime = "application/pdf";
+          use = "pdf";
+        }
+      ];
     };
 
     keymap.mgr.prepend_keymap = [
-      { on = "<Enter>"; run = "plugin smart-enter"; desc = "Enter dir or open file"; }
-      { on = "l";       run = "plugin smart-enter"; desc = "Enter dir or open file"; }
-      { on = "T";       run = "plugin toggle-pane max-preview"; desc = "Maximize preview"; }
-      { on = "M";       run = "plugin mount"; desc = "Mount manager"; }
+      {
+        on = "<Enter>";
+        run = "plugin smart-enter";
+        desc = "Enter dir or open file";
+      }
+      {
+        on = "l";
+        run = "plugin smart-enter";
+        desc = "Enter dir or open file";
+      }
+      {
+        on = "T";
+        run = "plugin toggle-pane max-preview";
+        desc = "Maximize preview";
+      }
+      {
+        on = "M";
+        run = "plugin mount";
+        desc = "Mount manager";
+      }
     ];
   };
-
-
 }
