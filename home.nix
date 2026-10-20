@@ -14,6 +14,7 @@
     rofi = "rofi";
     alacritty = "alacritty";
     tmux = "tmux";
+    rmpc = "rmpc";
   };
 in {
   imports = [
@@ -80,6 +81,7 @@ in {
     obsidian
     signal-desktop
     sioyek
+    rmpc
   ];
 
   programs.git = {
@@ -143,10 +145,25 @@ in {
         }
       ];
 
+      # rmpc ist ein TUI -> block = true, damit es im Yazi-Terminal läuft
+      opener.music = [
+        {
+          run = ''rmpc'';
+          block = true;
+          desc = "In rmpc-Queue und öffnen";
+          for = "unix";
+        }
+      ];
+
       open.prepend_rules = [
         {
           mime = "application/pdf";
           use = "pdf";
+        }
+
+        {
+          mime = "audio/*";
+          use = "music";
         }
       ];
     };
@@ -173,5 +190,17 @@ in {
         desc = "Mount manager";
       }
     ];
+  };
+
+  services.mpd = {
+    enable = true;
+    musicDirectory = "/home/marc/Music";
+    extraConfig = ''
+      audio_output {
+        type "pipewire"
+        name "PipeWire"
+      }
+      auto_update "yes"
+    '';
   };
 }
