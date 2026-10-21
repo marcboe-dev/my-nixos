@@ -8,6 +8,7 @@
 // https://niri-wm.github.io/niri/Configuration:-Input
 
 prefer-no-csd
+spawn-at-startup "noctalia-shell"
 
 input {
     keyboard {
@@ -61,13 +62,9 @@ output "Lenovo Group Limited T24m-20 V908ZPP0" {
     scale 1.25
     position x=0 y=0
 }
-// You can configure outputs by their name, which you can find
-// by running `niri msg outputs` while inside a niri instance.
-// The built-in laptop monitor is usually called "eDP-1".
-// Find more information on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Outputs
 // Remember to uncomment the node by removing "/-"!
-/-output "eDP-1" {
+output "eDP-1" {
     // Uncomment this line to disable this output.
     // off
 
@@ -80,7 +77,7 @@ output "Lenovo Group Limited T24m-20 V908ZPP0" {
     mode "1920x1080@120.030"
 
     // You can use integer or fractional scale, for example use 1.5 for 150% scale.
-    scale 2
+    scale 1.25
 
     // Transform allows to rotate the output counter-clockwise, valid values are:
     // normal, 90, 180, 270, flipped, flipped-90, flipped-180 and flipped-270.
