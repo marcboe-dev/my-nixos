@@ -10,12 +10,19 @@
 prefer-no-csd
 spawn-at-startup "noctalia"
 
+gestures {
+    hot-corners {
+        off
+    }
+}
+
 input {
     keyboard {
         repeat-rate 35
         repeat-delay 200
 
         xkb {
+            layout "at"
         }
         numlock
     }
@@ -34,19 +41,22 @@ input {
     focus-follows-mouse max-scroll-amount="0%"
 }
 
+output "eDP-1" {
+    mode "1920x1080@120.030"
+    scale 1.25
+    transform "normal"
+    position x=0 y=0
+}
+
 output "Lenovo Group Limited T24m-20 V908ZPP0" {
     mode "1920x1080@74.986"
     scale 1.25
-    position x=0 y=0
+    position x=1536 y=0
 }
-output "eDP-1" {
-    mode "1920x1080@120.030"
 
-    scale 1.25
-
-    transform "normal"
-
-    position x=1920 y=0
+switch-events {
+    lid-close { spawn "niri" "msg" "output" "eDP-1" "off"; }
+    lid-open  { spawn "niri" "msg" "output" "eDP-1" "on"; }
 }
 
 
@@ -61,7 +71,7 @@ layout {
         proportion 0.66667
     }
 
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 1.0; }
     focus-ring {
         off
         width 1.5
@@ -105,38 +115,30 @@ animations {
     off
 }
 
+// Benannte Workspaces: Reihenfolge = Index (Mod+1, Mod+2, Mod+3)
+workspace "term"
+workspace "web"
+workspace "notes"
+
+// Terminal: kein fester Platz, öffnet dort, wo du gerade bist
 window-rule {
-    match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
+    match app-id=r#"^Alacritty$"#
 }
 
-// Open the Firefox picture-in-picture player as floating by default.
+// Brave immer auf Workspace 2
 window-rule {
-    match app-id=r#"firefox$"# title="^Picture-in-Picture$"
-    open-floating true
+    match app-id=r#"^brave-browser$"#
+    open-on-workspace "web"
 }
 
-// Example: block out two password managers from screen capture.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    match app-id=r#"^org\.keepassxc\.KeePassXC$"#
-    match app-id=r#"^org\.gnome\.World\.Secrets$"#
-
-    block-out-from "screen-capture"
-
-    // Use this instead if you want them visible on third-party screenshot tools.
-    // block-out-from "screencast"
-}
-
-// Example: enable rounded corners for all windows.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    geometry-corner-radius 12
-    clip-to-geometry true
+// Obsidian immer auf Workspace 3
+window-rule {
+    match app-id=r#"^md\.obsidian\.Obsidian$"#
+    open-on-workspace "notes"
 }
 
 binds {
-    Mod+Shift+Slash { show-hotkey-overlay; }
+    Mod+Shift+ssharp { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
     Mod+Return hotkey-overlay-title="Open a Terminal: alacritty" { spawn "alacritty"; }
@@ -145,6 +147,11 @@ binds {
 
     // Noctalia Bar ein-/ausblenden
     Mod+Shift+B hotkey-overlay-title="Toggle Noctalia Bar" { spawn "noctalia" "msg" "bar-toggle"; }
+
+    // rofi + tmux (früher qtile KeyChord Mod+P → p/s/b)
+    Mod+Alt+P hotkey-overlay-title="Projects → tmux" { spawn "rofi-repos"; }
+    Mod+Alt+S hotkey-overlay-title="tmux Sessions" { spawn "rofi-sessions"; }
+    Mod+Alt+B hotkey-overlay-title="Bookmarks" { spawn "rofi-bookmarks"; }
 
     // Use spawn-sh to run a shell command. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
