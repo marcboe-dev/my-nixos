@@ -31,4 +31,12 @@ in {
     configs;
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
+
+  # Benachrichtigungen bei external Drives
+  services.udiskie = {
+    enable = true;
+    automount = true;
+    notify = true;
+    tray = "never"; # kein Tray nötig
+  };
 }

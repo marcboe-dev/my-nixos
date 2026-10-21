@@ -1,10 +1,11 @@
-{ config, pkgs, ... }:
-
 {
-  imports =
-    [ 
-      ./system
-    ];
+  config,
+  pkgs,
+  ...
+}: {
+  imports = [
+    ./system
+  ];
 
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -32,17 +33,17 @@
   services.displayManager.ly.enable = true;
 
   services.xserver = {
-  enable = true;
-  autoRepeatDelay = 200;
-  autoRepeatInterval = 35;
-  windowManager.qtile.enable = true;
-  displayManager.sessionCommands = ''
-  xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
-  '';
-  xkb = {
-  layout = "at";
-  variant = "";
-  };
+    enable = true;
+    autoRepeatDelay = 200;
+    autoRepeatInterval = 35;
+    windowManager.qtile.enable = true;
+    displayManager.sessionCommands = ''
+      xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
+    '';
+    xkb = {
+      layout = "at";
+      variant = "";
+    };
   };
 
   # Configure keymap in X11
@@ -67,10 +68,10 @@
   users.users."marc" = {
     isNormalUser = true;
     description = "marc";
-    extraGroups = [ 
-    "networkmanager" 
-    "wheel" 
-    "nordvpn"
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+      "nordvpn"
     ];
   };
 
@@ -80,42 +81,48 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  
   # Workaround: nixpkgs baut qtile 0.37.1 gegen wlroots 0.19, braucht aber 0.20
   nixpkgs.overlays = [
     (final: prev: {
-      pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
-        (pyfinal: pyprev: {
-          qtile = pyprev.qtile.override { wlroots = final.wlroots_0_20; };
-        })
-      ];
+      pythonPackagesExtensions =
+        prev.pythonPackagesExtensions
+        ++ [
+          (pyfinal: pyprev: {
+            qtile = pyprev.qtile.override {wlroots = final.wlroots_0_20;};
+          })
+        ];
     })
   ];
 
   environment.systemPackages = with pkgs; [
-     neovim 
-     wget
-     git
-     # wl-clipboard
-     alacritty
-    ];
-
-  system.stateVersion = "26.05"; 
-  
-  fonts.packages = with pkgs; [
-      nerd-fonts.jetbrains-mono
+    neovim
+    wget
+    git
+    # wl-clipboard
+    alacritty
   ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  system.stateVersion = "26.05";
+
+  fonts.packages = with pkgs; [
+    nerd-fonts.jetbrains-mono
+  ];
+
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   # Caps Lock: click once = Esc, hold = Ctrl
   services.keyd = {
     enable = true;
     keyboards.default = {
-      ids = [ "*" ];
+      ids = ["*"];
       settings.main = {
         capslock = "overload(control, esc)";
       };
     };
   };
+
+  # Externe Drives (zB USB, externe Festplatte)
+  services.udisks2.enable = true;
+  # Optional: NTFS-Sticks (exFAT/FAT/ext4 gehen schon über den Kernel)
+  boot.supportedFilesystems = ["ntfs"];
 }
