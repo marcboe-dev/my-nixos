@@ -10,6 +10,7 @@
     alacritty = "alacritty";
     tmux = "tmux";
     rmpc = "rmpc";
+    niri = "niri";
   };
 in {
   imports = [

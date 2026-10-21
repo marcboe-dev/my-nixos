@@ -1,10 +1,10 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
     rofi
-    xwallpaper
-    xclip
-    maim #screenshots
-    alsa-utils #advanced linux sound architecture
+    noctalia
+    alsa-utils
+    swaybg
+    fuzzel
   ];
 
   services.flameshot = {

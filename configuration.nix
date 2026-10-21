@@ -32,6 +32,9 @@
 
   services.displayManager.ly.enable = true;
 
+  programs.niri.enable = true; # legt die Session für ly an
+  environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Brave/Obsidian/Signal nativ auf Wayland
+
   services.xserver = {
     enable = true;
     autoRepeatDelay = 200;
@@ -100,6 +103,9 @@
     git
     # wl-clipboard
     alacritty
+
+    wl-clipboard # unbedingt, bei dir ist es auskommentiert
+    xwayland-satellite # für X11-only-Apps
   ];
 
   system.stateVersion = "26.05";
