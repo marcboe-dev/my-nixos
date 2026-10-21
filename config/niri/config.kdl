@@ -137,6 +137,13 @@ window-rule {
     open-on-workspace "notes"
 }
 
+window-rule {
+    match app-id=r#"^com\.gabm\.satty$"#
+    open-floating true
+    min-width 730
+    min-height 300
+}
+
 binds {
     Mod+Shift+ssharp { show-hotkey-overlay; }
 
@@ -157,6 +164,29 @@ binds {
     // Note: the entire command goes as a single argument. It's passed verbatim to `sh -c`.
     // For example, this is a standard bind to toggle the screen reader (orca).
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
+
+    // Screenshots
+    Mod+S            hotkey-overlay-title="Screenshot (region)" { spawn "dfr-screenshot" "region"; }
+    Mod+Shift+S      hotkey-overlay-title="Screenshot (window)" { spawn "dfr-screenshot" "window"; }
+    Mod+Ctrl+S       hotkey-overlay-title="Screenshot (monitor: focused)" { spawn "dfr-screenshot" "monitor-focused"; }
+    Mod+Ctrl+Shift+S hotkey-overlay-title="Screenshot (monitor: all)" { spawn "dfr-screenshot" "monitor-all"; }
+
+    // Apps.
+    Mod+Alt+F       hotkey-overlay-title="File manager" { spawn "thunar"; }
+    Mod+Alt+Shift+F hotkey-overlay-title="File manager (floating)" { spawn "thunar" "--name=dfr.floating.thunar"; }
+    // Mod+Alt+H            hotkey-overlay-title="System health" { spawn "dfr-launch-or-focus-tui" "monitor"; }
+    // Mod+Alt+T            hotkey-overlay-title="Terminal" { spawn "ghostty"; }
+    // Mod+Alt+Shift+T      hotkey-overlay-title="Terminal (floating)" { spawn "ghostty" "--class=dfr.floating.ghostty"; }
+    // Mod+Alt+F            hotkey-overlay-title="File manager" { spawn "thunar"; }
+    // Mod+Alt+Shift+F      hotkey-overlay-title="File manager (floating)" { spawn "thunar" "--name=dfr.floating.thunar"; }
+    // Mod+Alt+N            hotkey-overlay-title="Notes" { spawn "dfr-launch-or-focus-tui" "notes"; }
+    // Mod+Alt+Shift+N      hotkey-overlay-title="Notes (directory)" { spawn-sh "dfr-launch-or-focus-tui ${EDITOR} ${NOTES_DIRECTORY}"; }
+    // Mod+Alt+P            hotkey-overlay-title="Passwords" { spawn "dfr-launch-or-focus" "keepassxc"; }
+    // Mod+Alt+Shift+P      hotkey-overlay-title="Generate random password to clipboard" { spawn "pw"; }
+    // Mod+Alt+M            hotkey-overlay-title="Music" { spawn "dfr-launch-or-focus-tui" "rmpc"; }
+    // Mod+Alt+B            hotkey-overlay-title="Browser" { spawn "firefox"; }
+    // Mod+Alt+Shift+B      hotkey-overlay-title="Browser (private)" { spawn "firefox" "-private-window"; }
+    // Mod+Alt+Ctrl+Shift+B hotkey-overlay-title="Browser (isolated profile)" { spawn-sh "firefox -P ${BROWSER_ISOLATED_PROFILE:-isolated}"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
@@ -345,8 +375,13 @@ binds {
     Mod+Ctrl+Shift+R { switch-preset-window-height; }
     Mod+Ctrl+R { reset-window-height; }
 
-    Mod+F { maximize-column; }
-    Mod+Shift+F { fullscreen-window; }
+    // Window and column sizes.
+    Mod+F       hotkey-overlay-title="Maximize column" { maximize-column; }
+    Mod+Shift+F hotkey-overlay-title="Full screen window" { fullscreen-window; }
+    Mod+Ctrl+F  hotkey-overlay-title="Fill empty column space" { expand-column-to-available-width; }
+    // Mod+F { maximize-column; }
+    // Mod+Shift+F { fullscreen-window; }
+    // Mod+Ctrl+F { expand-column-to-available-width; }
 
     // While maximize-column leaves gaps and borders around the window,
     // maximize-window-to-edges doesn't: the window expands to the edges of the screen.
@@ -354,9 +389,6 @@ binds {
     // e.g. by double-clicking on the titlebar.
     Mod+M { maximize-window-to-edges; }
 
-    // Expand the focused column to space not taken up by other fully visible columns.
-    // Makes the column "fill the rest of the space".
-    Mod+Ctrl+F { expand-column-to-available-width; }
 
     Mod+C { center-column; }
 

@@ -12,6 +12,7 @@
     rmpc = "rmpc";
     niri = "niri";
     noctalia = "noctalia";
+    satty = "satty";
   };
 in {
   imports = [
