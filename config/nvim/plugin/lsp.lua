@@ -173,6 +173,13 @@ vim.lsp.config['nil_ls'] = {
     }
 }
 
+vim.lsp.config['taplo'] = {
+    cmd = { 'taplo', 'lsp', 'stdio' },
+    filetypes = { 'toml' },
+    root_markers = { '.taplo.toml', 'taplo.toml', '.git' },
+    capabilities = caps,
+}
+
 vim.lsp.config['rust_analyzer'] = {
     cmd = { 'rust-analyzer' },
     filetypes = { 'rust' },

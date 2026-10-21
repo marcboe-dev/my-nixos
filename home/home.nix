@@ -11,6 +11,7 @@
     tmux = "tmux";
     rmpc = "rmpc";
     niri = "niri";
+    noctalia = "noctalia";
   };
 in {
   imports = [

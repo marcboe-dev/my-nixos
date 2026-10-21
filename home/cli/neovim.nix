@@ -8,5 +8,6 @@
     nodejs
     gcc
     gnumake
+    taplo #TOML LSP + formatter
   ];
 }

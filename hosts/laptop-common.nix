@@ -57,6 +57,9 @@ in {
     };
   };
 
+  # Akkustatus für Bar-Widget und `upower -i`
+  services.upower.enable = true;
+
   # Bluetooth + grafischer Manager (Blueman)
   hardware.bluetooth = {
     enable = true;

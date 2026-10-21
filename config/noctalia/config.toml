@@ -1,0 +1,5 @@
+# ~/.config/noctalia/config.toml
+[bar.main]
+margin_ends = 0
+margin_edge = 0   # optional: bündig am oberen Rand, ohne Abstand
+radius      = 0   # optional: eckig statt abgerundet
