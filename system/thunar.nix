@@ -2,23 +2,47 @@
   programs.thunar = {
     enable = true;
     plugins = with pkgs; [
-      thunar-archive-plugin # "Hier entpacken" im Kontextmenü
-      thunar-volman # Wechseldatenträger
+      thunar-archive-plugin
+      thunar-volman
     ];
   };
 
-  programs.xfconf.enable = true; # Thunar-Einstellungen speichern
-  services.gvfs.enable = true; # Papierkorb, Mounts, Netzwerk
-  services.tumbler.enable = true; # Thumbnails
+  programs.xfconf.enable = true;
+  services.gvfs.enable = true;
+  services.tumbler.enable = true;
 
   environment.systemPackages = with pkgs; [
-    xarchiver # Archivprogramm für das Archive-Plugin
-    ffmpegthumbnailer # Video-Thumbnails
+    xarchiver
+    ffmpegthumbnailer
   ];
 
-  # Thunar als Standard für Ordner (Home-Manager-Teil, direkt hier mit drin)
-  home-manager.users.marc.xdg.mimeApps = {
-    enable = true;
-    defaultApplications."inode/directory" = ["thunar.desktop"];
+  home-manager.users.marc = {
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications."inode/directory" = ["thunar.desktop"];
+    };
+
+    gtk = {
+      enable = true;
+      theme = {
+        name = "Tokyonight-Dark-Moon";
+        package = pkgs.tokyonight-gtk-theme.override {
+          colorVariants = ["dark"];
+          tweakVariants = ["moon"];
+        };
+      };
+      iconTheme = {
+        name = "Papirus-Dark";
+        package = pkgs.papirus-icon-theme;
+      };
+      font = {
+        name = "FreeSans";
+        package = pkgs.freefont_ttf;
+        size = 11;
+      };
+      gtk3.extraConfig.gtk-application-prefer-dark-theme = 1;
+    };
+
+    dconf.settings."org/gnome/desktop/interface".color-scheme = "prefer-dark";
   };
 }
