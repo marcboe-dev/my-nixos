@@ -1,17 +1,19 @@
 {pkgs, ...}: let
-  dfr-screenshot = pkgs.writeShellApplication {
-    name = "dfr-screenshot";
-    runtimeInputs = with pkgs; [grim slurp jq wl-clipboard satty coreutils];
-    text = builtins.readFile ../scripts/dfr-screenshot.sh;
-  };
+  mkScript = name: deps:
+    pkgs.writeShellApplication {
+      inherit name;
+      runtimeInputs = deps;
+      text = builtins.readFile (../scripts + "/${name}.sh");
+    };
 in {
   home.packages = with pkgs; [
     rofi
     noctalia
     alsa-utils
     swaybg
-    fuzzel
-    dfr-screenshot
+    (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils])
+    (mkScript "dfr-launch-or-focus" [jq])
+    (mkScript "dfr-launch-or-focus-tui" [jq alacritty])
   ];
 
   # Damit ~/Pictures sicher existiert (sonst kann satty nicht speichern)

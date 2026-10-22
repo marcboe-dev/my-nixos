@@ -5,13 +5,21 @@
       runtimeInputs = deps;
       text = builtins.readFile (../../scripts + "/${name}.sh");
     };
+
+  repos =
+    mkScript "rofi-repos"
+    (with pkgs; [rofi tmux alacritty findutils coreutils procps]);
+  sessions =
+    mkScript "rofi-sessions"
+    (with pkgs; [rofi tmux alacritty gnused coreutils procps]);
+  bookmarks =
+    mkScript "rofi-bookmarks"
+    (with pkgs; [rofi gnugrep gnused coreutils util-linux xdg-utils]);
 in {
   home.packages = [
-    (mkScript "rofi-repos"
-      (with pkgs; [rofi tmux alacritty findutils coreutils procps]))
-    (mkScript "rofi-sessions"
-      (with pkgs; [rofi tmux alacritty gnused coreutils procps]))
-    (mkScript "rofi-bookmarks"
-      (with pkgs; [rofi gnugrep gnused coreutils util-linux xdg-utils]))
+    repos
+    sessions
+    bookmarks
+    (mkScript "rofi-launch" [pkgs.rofi repos sessions bookmarks])
   ];
 }
