@@ -1,7 +1,17 @@
-# Nutzung: install <host> [laptop]
-#   host:   Ordnername unter hosts/ (z.B. t14, t490, vm)
-#   laptop: nur nötig, wenn hosts/<host> noch nicht existiert
-#           (legt einen neuen Laptop-Host mit den Daten dieser Maschine an)
+# Nutzung: install <host> [laptop] [niri|qtile]
+#   host:       Ordnername unter hosts/ (z.B. t14, t490, vm)
+#   laptop:     nur nötig, wenn hosts/<host> noch nicht existiert
+#               (legt einen neuen Laptop-Host mit den Daten dieser Maschine an)
+#   niri|qtile: Desktop des Laptops. Bei neuen Laptops wird sonst gefragt,
+#               bei bestehenden wird damit umgestellt. Die VM ist immer qtile.
+#   Die Reihenfolge von "laptop" und "niri|qtile" ist egal.
+#
+# Beispiele:
+#   install vm                  # VM, immer qtile
+#   install t490 laptop         # neuer Laptop, fragt nach dem Desktop
+#   install t490 laptop qtile   # neuer Laptop, direkt mit qtile
+#   install t14                 # bestehender Laptop, Desktop wie in Git
+#   install t14 qtile           # bestehender Laptop, auf qtile umstellen
 
 REPO="https://github.com/marcboe-dev/my-nixos.git"
 DIR="$HOME/nixos-dotfiles"
@@ -37,10 +47,23 @@ cd "$DIR"
 
 # ── 3. Argumente prüfen ────────────────────────────────────────
 NAME="${1:-}"
-TYP="${2:-}"
+TYP=""
+DESKTOP=""
+
+# Restliche Argumente in beliebiger Reihenfolge einsammeln
+for ARG in "${@:2}"; do
+  case "$ARG" in
+    laptop) TYP="laptop" ;;
+    niri | qtile) DESKTOP="$ARG" ;;
+    *)
+      echo "FEHLER: Unbekanntes Argument '$ARG' (erlaubt: laptop, niri, qtile)."
+      exit 1
+      ;;
+  esac
+done
 
 if [ -z "$NAME" ]; then
-  echo "Nutzung: install <host> [laptop]"
+  echo "Nutzung: install <host> [laptop] [niri|qtile]"
   echo "Bekannte Hosts:"
   for d in hosts/*/; do echo "  $(basename "$d")"; done
   exit 1
@@ -65,12 +88,34 @@ if [ "$NAME" != "vm" ] && [ "$VIRT" != "none" ]; then
   confirm "Trotzdem fortfahren?"
 fi
 
-# ── 5. Neuen Laptop-Host anlegen ───────────────────────────────
+# ── 4b. Desktop-Wahl bei der VM ignorieren ─────────────────────
+# Die VM ist fest auf qtile eingestellt (hosts/vm/default.nix).
+if [ "$NAME" = "vm" ] && [ -n "$DESKTOP" ]; then
+  if [ "$DESKTOP" != "qtile" ]; then
+    echo "HINWEIS: Die VM läuft immer mit qtile. '$DESKTOP' wird ignoriert."
+  fi
+  DESKTOP=""
+fi
+
+# ── 5. Neuen Laptop-Host anlegen bzw. Desktop umstellen ────────
 if [ ! -f "$HOSTDIR/default.nix" ]; then
   if [ "$TYP" != "laptop" ]; then
     echo "Host '$NAME' existiert nicht unter hosts/."
-    echo "Neuen Laptop anlegen mit: install $NAME laptop"
+    echo "Neuen Laptop anlegen mit: install $NAME laptop [niri|qtile]"
     exit 1
+  fi
+
+  # Desktop abfragen, falls nicht als Argument übergeben
+  if [ -z "$DESKTOP" ]; then
+    echo "Welcher Desktop für '$NAME'?"
+    echo "  1) niri  (Wayland, Standard)"
+    echo "  2) qtile (X11)"
+    read -r -p "Auswahl [1]: " WAHL
+    case "${WAHL:-1}" in
+      1) DESKTOP="niri" ;;
+      2) DESKTOP="qtile" ;;
+      *) echo "Ungültige Auswahl."; exit 1 ;;
+    esac
   fi
 
   mkdir -p "$HOSTDIR"
@@ -91,13 +136,18 @@ if [ ! -f "$HOSTDIR/default.nix" ]; then
     echo "         bis edidLaptop in $HOSTDIR/machine.nix gesetzt ist."
   fi
 
-  cat > "$HOSTDIR/default.nix" <<'EOF'
+  # Ohne Anführungszeichen um EOF, damit $NAME und $DESKTOP eingesetzt werden
+  cat > "$HOSTDIR/default.nix" <<EOF
 { ... }:
 {
   imports = [
     ./hardware-configuration.nix
     (import ../laptop-common.nix (import ./machine.nix))
   ];
+
+  # Desktop dieses Laptops: "niri" (Wayland) oder "qtile" (X11).
+  # Ändern: hier umstellen ODER  install $NAME niri|qtile  erneut ausführen.
+  my.desktop = "$DESKTOP";
 }
 EOF
 
@@ -109,7 +159,18 @@ EOF
 }
 EOF
 
-  echo "Neuer Laptop-Host '$NAME' angelegt."
+  echo "Neuer Laptop-Host '$NAME' mit Desktop '$DESKTOP' angelegt."
+
+elif [ -n "$DESKTOP" ]; then
+  # Bestehender Laptop + Desktop als Argument → Zeile in default.nix umstellen
+  if grep -q '^  my.desktop = ' "$HOSTDIR/default.nix"; then
+    sed -i "s/^  my.desktop = .*/  my.desktop = \"$DESKTOP\";/" "$HOSTDIR/default.nix"
+    echo "Desktop von '$NAME' auf $DESKTOP gesetzt."
+  else
+    echo "FEHLER: In $HOSTDIR/default.nix fehlt die Zeile:  my.desktop = \"...\";"
+    echo "Bitte einmal von Hand eintragen (siehe hosts/t14/default.nix)."
+    exit 1
+  fi
 fi
 
 # ── 6. Hardware-Config dieser Maschine übernehmen ──────────────
@@ -133,7 +194,7 @@ echo
 if [ "$NAME" = "vm" ]; then
   echo "Fertig. Für die VM ist kein Commit nötig."
 elif [ -n "$(git status --porcelain -- "$HOSTDIR")" ]; then
-  echo "Fertig. Es gibt Änderungen an hosts/$NAME (neuer Host oder neue Hardware-Config)."
+  echo "Fertig. Es gibt Änderungen an hosts/$NAME (neuer Host, neue Hardware-Config oder neuer Desktop)."
   echo "Nach dem Neustart im Repo sichern:"
   echo "  gh auth login"
   echo "  cd ~/nixos-dotfiles && git commit -m \"Host $NAME\" && git push"

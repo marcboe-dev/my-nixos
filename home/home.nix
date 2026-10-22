@@ -4,19 +4,15 @@
 
   # Ordner aus config/ → ~/.config/<name>
   configs = {
-    qtile = "qtile";
     nvim = "nvim";
     rofi = "rofi";
     alacritty = "alacritty";
     tmux = "tmux";
     rmpc = "rmpc";
-    niri = "niri";
-    noctalia = "noctalia";
-    satty = "satty";
   };
 in {
   imports = [
-    ./desktop.nix
+    ./desktop
     ./apps
     ./cli
   ];

@@ -9,11 +9,7 @@ machine: {
   dockId = "cf030000-0080-7718-a350-5310d8304021"; # cat /sys/bus/thunderbolt/devices/1-1/unique_id
 
   # ── Pro Maschine aus machine.nix ────────────────────────────────
-  panel = machine.panel or "eDP-1";
-  edidLaptop = machine.edidLaptop or "";
   speaker = machine.speakerCard or null;
-  dpi = machine.dpi or 120;
-  hasPanel = edidLaptop != ""; # ohne EDID bleibt autorandr aus
 
   batteryNotify = pkgs.writeShellApplication {
     name = "battery-notify";
@@ -21,6 +17,10 @@ machine: {
     text = builtins.readFile ../scripts/battery_notify.sh;
   };
 in {
+  # X11-Teile (autorandr, picom, libinput, dpi, dunst).
+  # Schalten sich selbst nur bei my.desktop = "qtile" ein.
+  imports = [(import ./laptop-qtile.nix machine)];
+
   # ThinkPad Thunderbolt 3 Dock automatisch freigeben
   services.udev.extraRules = ''
     ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{unique_id}=="${dockId}", ATTR{authorized}=="0", ATTR{authorized}="1"

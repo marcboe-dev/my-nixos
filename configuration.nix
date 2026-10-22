@@ -32,23 +32,6 @@
 
   services.displayManager.ly.enable = true;
 
-  programs.niri.enable = true; # legt die Session für ly an
-  environment.sessionVariables.NIXOS_OZONE_WL = "1"; # Brave/Obsidian/Signal nativ auf Wayland
-
-  services.xserver = {
-    enable = true;
-    autoRepeatDelay = 200;
-    autoRepeatInterval = 35;
-    windowManager.qtile.enable = true;
-    displayManager.sessionCommands = ''
-      xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
-    '';
-    xkb = {
-      layout = "at";
-      variant = "";
-    };
-  };
-
   # Configure keymap in X11
   # services.xserver.xkb = {
   #   layout = "at";
@@ -84,28 +67,11 @@
 
   nixpkgs.config.allowUnfree = true;
 
-  # Workaround: nixpkgs baut qtile 0.37.1 gegen wlroots 0.19, braucht aber 0.20
-  nixpkgs.overlays = [
-    (final: prev: {
-      pythonPackagesExtensions =
-        prev.pythonPackagesExtensions
-        ++ [
-          (pyfinal: pyprev: {
-            qtile = pyprev.qtile.override {wlroots = final.wlroots_0_20;};
-          })
-        ];
-    })
-  ];
-
   environment.systemPackages = with pkgs; [
     neovim
     wget
     git
-    # wl-clipboard
     alacritty
-
-    wl-clipboard # unbedingt, bei dir ist es auskommentiert
-    xwayland-satellite # für X11-only-Apps
   ];
 
   system.stateVersion = "26.05";
