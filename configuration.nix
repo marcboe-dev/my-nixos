@@ -41,8 +41,19 @@
       xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
     '';
     xkb = {
-      layout = "at";
+      layout = "at-hjkl";
       variant = "";
+      extraLayouts.at-hjkl = {
+        description = "German (Austria) with AltGr+j = ĵ";
+        languages = ["deu"];
+        symbolsFile = pkgs.writeText "at-hjkl" ''
+          xkb_symbols "at-hjkl" {
+            include "at(basic)"
+            name[Group1] = "German (Austria) hjkl";
+            key <AC07> { [ j, J, U0135, U0134 ] };  // AltGr+j -> ĵ
+          };
+        '';
+      };
     };
   };
 
