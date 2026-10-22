@@ -1,5 +1,23 @@
-# ~/.config/noctalia/config.toml
+[bar]
+order = ["main", "default"]
+
+[bar.default]
+enabled = false
+
 [bar.main]
 margin_ends = 0
-margin_edge = 0   # optional: bündig am oberen Rand, ohne Abstand
-radius      = 0   # optional: eckig statt abgerundet
+margin_edge = 0 # optional: bündig am oberen Rand, ohne Abstand
+radius = 0      # optional: eckig statt abgerundet
+
+[theme]
+mode = "dark"
+source = "builtin"
+builtin = "Tokyo-Night"
+
+[wallpaper]
+enabled = true
+fill_mode = "crop"
+directory = "/home/marc/nixos-dotfiles/walls"
+
+[wallpaper.default]
+path = "/home/marc/nixos-dotfiles/walls/wall1.png"
