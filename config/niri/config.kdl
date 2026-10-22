@@ -71,7 +71,8 @@ layout {
         proportion 0.66667
     }
 
-    default-column-width { proportion 0.5; }
+    default-column-width { proportion 1.0; }
+
     focus-ring {
         off
         width 1.5
@@ -110,7 +111,7 @@ animations {
 }
 
 // Alles mit app-id "dfr.floating.*" öffnet klein und schwebend
-// (Thunar floating, Alacritty floating).
+// (Thunar floating, Kitty floating).
 window-rule {
     match app-id=r#"^dfr\.floating\."#
     open-floating true
@@ -152,8 +153,8 @@ binds {
     Mod+Ctrl+Shift+S hotkey-overlay-title="Screenshot (monitor: all)" { spawn "dfr-screenshot" "monitor-all"; }
 
     // Apps.
-    Mod+Return hotkey-overlay-title="Terminal" { spawn "alacritty"; }
-    Mod+Alt+Return hotkey-overlay-title="Terminal (floating)" { spawn "alacritty" "--class" "dfr.floating.alacritty"; }
+    Mod+Return hotkey-overlay-title="Terminal" { spawn "kitty"; }
+    Mod+Alt+Return hotkey-overlay-title="Terminal (floating)" { spawn "kitty" "--class" "dfr.floating.kitty"; }
     Mod+Alt+B       hotkey-overlay-title="Browser: Brave" { spawn "dfr-launch-or-focus" "^brave-browser$" "brave"; }
     Mod+Alt+O       hotkey-overlay-title="Obsidian" { spawn "dfr-launch-or-focus" "obsidian$" "obsidian"; }
     Mod+Alt+F       hotkey-overlay-title="File manager" { spawn "thunar"; }

@@ -1,5 +1,5 @@
 # Bestehende tmux-Sessions auflisten, anhängen oder neue anlegen
-terminal="${TERMINAL:-alacritty}"
+terminal="${TERMINAL:-kitty}"
 one_terminal="${ONE_TERMINAL:-1}"
 new_entry="+ Neue Session…"
 

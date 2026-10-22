@@ -1,9 +1,9 @@
-# Startet ein TUI in Alacritty mit eigener app-id (dfr.alacritty.<app>)
+# Startet ein TUI in Kitty mit eigener app-id (dfr.kitty.<app>)
 # oder fokussiert es, falls es schon läuft.
 # Beispiel: dfr-launch-or-focus-tui btop
 APP="$1"
 shift
-CLASS="dfr.alacritty.${APP}"
+CLASS="dfr.kitty.${APP}"
 
 ID=$(niri msg --json windows |
   jq --arg c "$CLASS" '[.[] | select(.app_id == $c)] | last | .id // empty')
@@ -15,5 +15,5 @@ else
     echo "$APP existiert nicht, Abbruch!" >&2
     exit 1
   fi
-  niri msg action spawn -- alacritty --class "$CLASS" -e "$APP" "$@"
+  niri msg action spawn -- kitty --class "$CLASS" -e "$APP" "$@"
 fi

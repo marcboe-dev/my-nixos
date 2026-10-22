@@ -30,7 +30,7 @@ in
       swaybg # Wallpaper unter Wayland
       (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils])
       (mkScript "dfr-launch-or-focus" [jq])
-      (mkScript "dfr-launch-or-focus-tui" [jq alacritty])
+      (mkScript "dfr-launch-or-focus-tui" [jq kitty])
     ];
 
     # Damit ~/Pictures sicher existiert (sonst kann satty nicht speichern)

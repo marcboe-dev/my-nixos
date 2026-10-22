@@ -6,7 +6,7 @@
   configs = {
     nvim = "nvim";
     rofi = "rofi";
-    alacritty = "alacritty";
+    kitty = "kitty";
     tmux = "tmux";
     rmpc = "rmpc";
   };

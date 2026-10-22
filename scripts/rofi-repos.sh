@@ -1,6 +1,6 @@
 # Projekt aus ~/repos wählen -> tmux-Session dort öffnen oder anhängen
 repos_dir="${REPOS_DIR:-$HOME/repos}"
-terminal="${TERMINAL:-alacritty}"
+terminal="${TERMINAL:-kitty}"
 one_terminal="${ONE_TERMINAL:-1}"   # 1 = Tony-Verhalten: altes Terminal schließen
 
 [ -d "$repos_dir" ] || exit 0

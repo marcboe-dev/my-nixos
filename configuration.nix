@@ -67,11 +67,16 @@
 
   nixpkgs.config.allowUnfree = true;
 
+  # setze neovim als Standardeditor
+  programs.neovim = {
+    enable = true;
+    defaultEditor = true; # setzt EDITOR=nvim für die ganze Session
+  };
+
   environment.systemPackages = with pkgs; [
-    neovim
     wget
     git
-    alacritty
+    kitty
   ];
 
   system.stateVersion = "26.05";

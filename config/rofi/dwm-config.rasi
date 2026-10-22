@@ -2,7 +2,7 @@ configuration {
 	modi: "drun";
 	font: "JetBrainsMono Nerd Font 10";
 	show-icons: false;
-	terminal: "alacritty";
+	terminal: "kitty";
 	icon-theme: "Papirus-Dark";
 	drun-display-format: "{name}";
 	display-drun: "";

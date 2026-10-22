@@ -1,6 +1,4 @@
 {pkgs, ...}: {
-  home.packages = [pkgs.ueberzugpp]; # Bildvorschau
-
   programs.yazi = {
     enable = true;
     enableBashIntegration = true;

@@ -9,7 +9,7 @@ import subprocess
 mod = "mod4"
 terminal = guess_terminal()
 
-myTerm = "alacritty" 
+myTerm = "kitty" 
 
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),

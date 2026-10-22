@@ -5,5 +5,6 @@
     ./obsidian.nix
     ./sioyek.nix
     ./signal.nix
+    ./kitty.nix
   ];
 }

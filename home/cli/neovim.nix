@@ -1,6 +1,5 @@
 {pkgs, ...}: {
   home.packages = with pkgs; [
-    neovim
     ripgrep
     nil
     alejandra #ersetzt nixpkgs-fmt
