@@ -1,8 +1,20 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  config,
+  ...
+}: {
   programs.thunar = {
     enable = true;
     plugins = with pkgs; [
-      thunar-archive-plugin
+      # Plugin sucht .tap-Wrapper nur im eigenen libexec → xarchiver.tap dort verlinken
+      (thunar-archive-plugin.overrideAttrs (old: {
+        postInstall =
+          (old.postInstall or "")
+          + ''
+            ln -s ${xarchiver}/libexec/thunar-archive-plugin/xarchiver.tap \
+              $out/libexec/thunar-archive-plugin/
+          '';
+      }))
       thunar-volman
     ];
   };
@@ -17,6 +29,10 @@
   ];
 
   home-manager.users.marc = {
+    xdg.configFile."xfce4/helpers.rc".text = ''
+      TerminalEmulator=${config.my.terminal}
+    '';
+
     xdg.mimeApps = {
       enable = true;
       defaultApplications."inode/directory" = ["thunar.desktop"];

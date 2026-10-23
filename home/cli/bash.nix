@@ -19,7 +19,6 @@
   home.packages = with pkgs; [
     bat
     btop
-    unrar
   ];
 
   programs.zoxide.enable = true;
