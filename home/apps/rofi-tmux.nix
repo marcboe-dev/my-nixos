@@ -1,4 +1,10 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  osConfig,
+  ...
+}: let
+  term = pkgs.${osConfig.my.terminal};
+
   mkScript = name: deps:
     pkgs.writeShellApplication {
       inherit name;
@@ -8,10 +14,10 @@
 
   repos =
     mkScript "rofi-repos"
-    (with pkgs; [rofi tmux kitty findutils coreutils procps]);
+    (with pkgs; [rofi tmux term findutils coreutils procps]);
   sessions =
     mkScript "rofi-sessions"
-    (with pkgs; [rofi tmux kitty gnused coreutils procps]);
+    (with pkgs; [rofi tmux term gnused coreutils procps]);
   bookmarks =
     mkScript "rofi-bookmarks"
     (with pkgs; [rofi gnugrep gnused coreutils util-linux xdg-utils]);

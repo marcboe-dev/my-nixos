@@ -76,7 +76,6 @@
   environment.systemPackages = with pkgs; [
     wget
     git
-    kitty
   ];
 
   system.stateVersion = "26.05";

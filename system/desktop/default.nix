@@ -2,7 +2,7 @@
 # Desktop-Auswahl pro Host
 #
 # Hier wird die eigene Option `my.desktop` definiert. Jeder Host kann sie
-# in hosts/<name>/default.nix setzen, z.B.:
+# in hosts/<n>/default.nix setzen, z.B.:
 #
 #     my.desktop = "qtile";
 #
@@ -15,6 +15,18 @@
 #
 # Home-Manager liest dieselbe Option über `osConfig` mit
 # (siehe home/desktop/). Es gibt also genau EINE Stelle, die entscheidet.
+#
+# Terminal hängt am Desktop:
+#   `my.desktop` bestimmt auch den Default von `my.terminal`
+#   (definiert in system/terminal.nix):
+#
+#       qtile (X11)     → alacritty
+#       niri  (Wayland) → kitty
+#
+#   Installiert wird nur dieses eine Terminal. TERMINAL, rofi, die
+#   rofi-tmux-Skripte und qtile richten sich danach, ebenso welcher
+#   Ordner aus config/ (alacritty oder kitty) verlinkt wird.
+#   Abweichen pro Host:  my.terminal = "kitty";  in hosts/<n>/default.nix.
 # ─────────────────────────────────────────────────────────────────────
 {lib, ...}: {
   # imports dürfen nie innerhalb von lib.mkIf stehen: Nix muss die Liste

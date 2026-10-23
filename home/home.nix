@@ -1,14 +1,19 @@
-{config, ...}: let
+{
+  config,
+  osConfig,
+  ...
+}: let
   dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
   create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
+  term = osConfig.my.terminal;
 
   # Ordner aus config/ → ~/.config/<name>
   configs = {
     nvim = "nvim";
     rofi = "rofi";
-    kitty = "kitty";
     tmux = "tmux";
     rmpc = "rmpc";
+    ${term} = term; # VM: alacritty, T14: kitty
   };
 in {
   imports = [

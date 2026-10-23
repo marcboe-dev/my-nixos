@@ -1,3 +1,12 @@
+-- ============================================================
+-- AUTOCOMPLETE / VORSCHLÄGE / CMP
+-- <C-Space>  (Insert-Mode) Vorschlags-Menü öffnen
+-- <C-n>/<C-p> oder <Tab>/<S-Tab>  durch Vorschläge blättern
+-- <C-f>/<C-u>  Doku-Fenster scrollen
+-- Doku = Infos vom LSP zum markierten Vorschlag (Signatur, Beschreibung)
+--        In Ruhe lesen: im Normal-Mode K, nochmal K = hineinspringen
+-- ============================================================
+
 local cmp = require("cmp")
 require("cmp_nvim_lsp").setup()
 cmp.register_source("path", require("cmp_path").new())

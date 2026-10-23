@@ -1,30 +1,28 @@
 # ─────────────────────────────────────────────────────────────────────
-# Laptop-Einstellungen, die NUR unter X11/qtile gebraucht werden.
-# (Stand von main, bevor niri dazukam.)
+# Laptop-Teile, die NUR unter X11/qtile gebraucht werden.
 #
-# Aktiv nur auf Laptops mit  my.desktop = "qtile";
+# Aktiv nur bei  my.laptop.enable = true;  UND  my.desktop = "qtile";
 # Unter niri macht niri das selbst: Monitore und Touchpad in config.kdl,
-# VSync im Compositor, Notifications über noctalia.
+# VSync im Compositor, Benachrichtigungen über noctalia.
 #
-# Die VM nutzt diese Datei NICHT – sie importiert laptop-common.nix nicht
-# und hat ihre eigenen X11-Einstellungen in hosts/vm/default.nix.
-#
-# Aufruf: aus laptop-common.nix mit  (import ./laptop-qtile.nix machine)
+# Die VM nutzt diese Datei nicht (my.laptop.enable ist dort false) und
+# hat ihre eigenen X11-Einstellungen in hosts/vm/default.nix.
 # ─────────────────────────────────────────────────────────────────────
-machine: {
+{
   config,
   lib,
   pkgs,
   ...
 }: let
+  cfg = config.my.laptop;
+
   # ── Externe Monitore an deinem Dock (für autorandr) ──────────────
   edidMonitor = "00ffffffffffff0030aecd62000000002b1f0104a5351f783a0565a756529c270f5054afef00714f8180818a9500a9c0a9cfb300d1cf023a801871382d40582c45000f282100001e000000fd00324c1e5512000a202020202020000000fc005432346d2d32300a2020202020000000ff00563930385a5050300a2020202001a3020318f14b901f04130302121101051423090f0783010000023a801871382d40582c45000f282100001e011d007251d01e206e2855000f282100001e8c0ad08a20e02d10103e96000f282100001800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000df"; # autorandr --fingerprint → DP-3-2
   edidMonitorHdmi = "00ffffffffffff0030aecd62000000002b1f010380351f782a0565a756529c270f5054afef00714f8180818a9500a9c0a9cfb300d1cf023a801871382d40582c45000f282100001e000000fc005432346d2d32300a2020202020000000fd00324c1e5512000a202020202020000000ff00563930385a5050300a2020202001d902031ef14b9005040302011f1213141123090f078301000065030c001000023a801871382d40582c45000f282100001e011d007251d01e206e2855000f282100001e8c0ad08a20e02d10103e96000f28210000180000000000000000000000000000000000000000000000000000000000000000000000000000000000000055"; # autorandr --fingerprint → HDMI-1
 
-  # ── Pro Maschine aus machine.nix ────────────────────────────────
-  panel = machine.panel or "eDP-1";
-  edidLaptop = machine.edidLaptop or "";
-  dpi = machine.dpi or 120;
+  # ── Pro Maschine aus my.laptop ───────────────────────────────────
+  panel = cfg.panel;
+  edidLaptop = cfg.edid;
   hasPanel = edidLaptop != ""; # ohne EDID bleibt autorandr aus
 
   laptopScreen = {
@@ -55,7 +53,7 @@ machine: {
     );
   '';
 in
-  lib.mkIf (config.my.desktop == "qtile") {
+  lib.mkIf (cfg.enable && config.my.desktop == "qtile") {
     # autorandr beim Auf- und Zuklappen auslösen (über den Dienst, kein Doppellauf)
     services.acpid = lib.mkIf hasPanel {
       enable = true;
@@ -136,13 +134,13 @@ in
       };
     };
 
-    services.xserver.dpi = dpi; # 96 = 100 %, 120 = 125 %, 144 = 150 %
+    services.xserver.dpi = cfg.dpi;
 
     # Kein Tearing: picom mit VSync, Config siehe picomConf oben
     services.picom.enable = true;
     systemd.user.services.picom.serviceConfig.ExecStart =
       lib.mkForce "${pkgs.picom}/bin/picom --config ${picomConf}";
 
-    # Notifications unter X11 (unter niri macht das noctalia)
+    # Benachrichtigungen unter X11 (unter niri macht das noctalia)
     home-manager.users.marc.services.dunst.enable = true;
   }

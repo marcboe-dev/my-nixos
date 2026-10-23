@@ -1,4 +1,11 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  lib,
+  osConfig,
+  ...
+}: {
+  home.packages = lib.optional (osConfig.my.terminal == "alacritty") pkgs.ueberzugpp;
+
   programs.yazi = {
     enable = true;
     enableBashIntegration = true;

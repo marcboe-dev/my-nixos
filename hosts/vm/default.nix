@@ -4,6 +4,7 @@
   # Die VM läuft immer mit X11 + qtile (unter VMware flüssiger als Wayland).
   # install.sh ignoriert bei der VM jede andere Desktop-Angabe.
   my.desktop = "qtile";
+  my.terminal = "alacritty";
 
   networking.networkmanager.insertNameservers = ["1.1.1.1" "9.9.9.9"];
 

@@ -108,8 +108,8 @@ if [ ! -f "$HOSTDIR/default.nix" ]; then
   # Desktop abfragen, falls nicht als Argument übergeben
   if [ -z "$DESKTOP" ]; then
     echo "Welcher Desktop für '$NAME'?"
-    echo "  1) niri  (Wayland, Standard)"
-    echo "  2) qtile (X11)"
+    echo "  1) niri  (Wayland, Kitty, Standard)"
+    echo "  2) qtile (X11, Alacritty)"
     read -r -p "Auswahl [1]: " WAHL
     case "${WAHL:-1}" in
       1) DESKTOP="niri" ;;
@@ -133,29 +133,27 @@ if [ ! -f "$HOSTDIR/default.nix" ]; then
     PANEL="eDP-1"
     EDID=""
     echo "WARNUNG: Kein internes Display gefunden. autorandr bleibt aus,"
-    echo "         bis edidLaptop in $HOSTDIR/machine.nix gesetzt ist."
+    echo "         bis my.laptop.edid in $HOSTDIR/default.nix gesetzt ist."
   fi
 
   # Ohne Anführungszeichen um EOF, damit $NAME und $DESKTOP eingesetzt werden
+  # Ohne Anführungszeichen um EOF, damit $NAME, $DESKTOP, $PANEL und $EDID eingesetzt werden
   cat > "$HOSTDIR/default.nix" <<EOF
-{ ... }:
-{
-  imports = [
-    ./hardware-configuration.nix
-    (import ../laptop-common.nix (import ./machine.nix))
-  ];
+{...}: {
+  imports = [./hardware-configuration.nix];
 
-  # Desktop dieses Laptops: "niri" (Wayland) oder "qtile" (X11).
+  # Desktop dieses Laptops: "niri" (Wayland, Kitty) oder "qtile" (X11, Alacritty).
   # Ändern: hier umstellen ODER  install $NAME niri|qtile  erneut ausführen.
   my.desktop = "$DESKTOP";
-}
-EOF
 
-  cat > "$HOSTDIR/machine.nix" <<EOF
-{
-  panel = "$PANEL";
-  edidLaptop = "$EDID";
-  speakerCard = null; # optional: Soundkarten-Name aus pactl list cards short
+  # Laptop-Teile einschalten, Werte dieser Maschine (von install.sh ausgelesen)
+  my.laptop = {
+    enable = true;
+    panel = "$PANEL";
+    edid = "$EDID";
+    speakerCard = null; # optional: Name aus  pactl list cards short
+    dpi = 120; # nur qtile: 96 = 100 %, 120 = 125 %, 144 = 150 %
+  };
 }
 EOF
 

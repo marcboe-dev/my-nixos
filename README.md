@@ -8,14 +8,15 @@ Reproduzierbares NixOS mit Flakes und Home Manager für Bare Metal
     flake.nix                 # Hosts werden automatisch aus hosts/ erzeugt
     configuration.nix         # gemeinsame System-Config
     hosts/
-      laptop-common.nix       # geteilte Laptop-Logik (Dock, autorandr, picom ...)
       t14/           # eine Maschine = ein Ordner
-        default.nix
-        machine.nix           # nur Maschinenspezifisches (EDID des Displays)
+        default.nix           # Desktop + Laptop-Werte (EDID, Soundkarte, DPI)
         hardware-configuration.nix
       t490/          # wird beim ersten Install automatisch angelegt
       vm/
-    system/                   # NixOS-Ebene (brave-policy ...)
+    system/                   # NixOS-Ebene
+      desktop/                # my.desktop: niri oder qtile
+      laptop/                 # my.laptop: Dock, Akku, Bluetooth, autorandr ...
+      terminal.nix            # my.terminal: folgt dem Desktop
     home/                     # Home-Manager-Ebene
       home.nix, desktop.nix
       apps/                   # GUI-Programme
@@ -101,7 +102,8 @@ Nach einem neuen Laptop oder einer Neuinstallation (neue UUIDs) die
   Hintergrundbild.
 - Jede physische Maschine hat einen eigenen Ordner mit eigener
   `hardware-configuration.nix`. Nie die einer anderen Maschine übernehmen.
-- Dock- und Monitor-Daten stehen einmal in `hosts/laptop-common.nix`. Nur das
-  interne Display (`edidLaptop`) steht pro Maschine in `machine.nix`.
+- Dock- und Monitor-Daten stehen einmal in `system/laptop/`. Nur das
+  interne Display (`my.laptop.edid`) steht pro Maschine in
+  `hosts/<name>/default.nix`.
 - Neovim-Plugins werden beim ersten Start geklont und sind noch nicht
   gepinnt (siehe Hinweise zur Reproduzierbarkeit).

@@ -6,6 +6,7 @@
     enable = true;
     defaultApplications = {
       "application/pdf" = ["sioyek.desktop"];
+      "application/epub+zip" = ["sioyek.desktop"];
     };
   };
 }
