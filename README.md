@@ -7,6 +7,7 @@ Reproduzierbares NixOS mit Flakes und Home Manager für Bare Metal
 
     flake.nix                 # Hosts werden automatisch aus hosts/ erzeugt
     configuration.nix         # gemeinsame System-Config
+    install.sh                # Installationsskript (über nix run)
     hosts/
       t14/           # eine Maschine = ein Ordner
         default.nix           # Desktop + Laptop-Werte (EDID, Soundkarte, DPI)
@@ -18,14 +19,28 @@ Reproduzierbares NixOS mit Flakes und Home Manager für Bare Metal
       laptop/                 # my.laptop: Dock, Akku, Bluetooth, autorandr ...
       terminal.nix            # my.terminal: folgt dem Desktop
     home/                     # Home-Manager-Ebene
-      home.nix, desktop.nix
+      home.nix
+      desktop/                # niri.nix, qtile.nix (folgen my.desktop)
       apps/                   # GUI-Programme
       cli/                    # Terminal-Tools
-    config/                   # Dotfiles (nvim, qtile, tmux, rofi, ...)
+    config/                   # Dotfiles (nvim, qtile, niri, tmux, rofi, ...)
     scripts/
 
 Der Hostname jeder Maschine ist `nixos-<ordnername>`
 (`hosts/t14` → `nixos-t14`).
+
+## Desktop und Terminal
+
+Jeder Host wählt seinen Desktop mit `my.desktop` in `hosts/<name>/default.nix`.
+Das Terminal folgt automatisch:
+
+| Desktop | Grafik  | Terminal  |
+|---------|---------|-----------|
+| niri    | Wayland | Kitty     |
+| qtile   | X11     | Alacritty |
+
+Die VM läuft immer mit qtile. Installiert wird nur das passende Terminal.
+Abweichen pro Host mit `my.terminal = "kitty";` bzw. `"alacritty"`.
 
 ## Neu installieren (egal was)
 
@@ -35,30 +50,41 @@ Der Hostname jeder Maschine ist `nixos-<ordnername>`
    - Desktop egal, wird durch die Config ersetzt
 2. Nach dem ersten Login mit Internet verbinden und **einen** der Befehle ausführen:
 
-   **ThinkPad T14** (bekannte Maschine):
+   **ThinkPad T14** (bekannte Maschine, Desktop wie in Git):
 
        nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- t14
 
-   **VMware-VM:**
+   **VMware-VM** (immer qtile):
 
        nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- vm
 
-   **ThinkPad T490, erste Installation** (legt `hosts/t490/` an):
+   **Neuer Laptop, erste Installation** (legt `hosts/<name>/` an, fragt nach dem Desktop):
 
        nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- t490 laptop
 
-   **ThinkPad T490, spätere Neuinstallation** (Ordner existiert bereits):
+   Desktop direkt mitgeben statt Rückfrage:
+
+       ... -- t490 laptop niri     # Wayland + Kitty
+       ... -- t490 laptop qtile    # X11 + Alacritty
+
+   **Bekannter Laptop, Neuinstallation** (Ordner existiert bereits, Desktop wie in Git):
 
        nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- t490
 
-   **Neuer, anderer Laptop:** wie beim T490, nur mit eigenem Namen
-   (`-- <name> laptop`, nur a–z, 0–9 und `-`).
+   **Desktop eines bekannten Laptops umstellen:**
 
-3. Neu starten und beim Login die Qtile-Sitzung wählen.
+       ... -- t14 qtile
+
+   Der Name ist frei wählbar (nur a–z, 0–9 und `-`). `laptop` braucht es nur
+   beim ersten Mal, die Reihenfolge von `laptop` und `niri|qtile` ist egal.
+
+3. Neu starten und beim Login die Sitzung des Hosts wählen
+   (niri oder qtile, die VM ist immer qtile).
 
 Das Skript klont das Repo nach `~/nixos-dotfiles` (oder aktualisiert es),
 übernimmt die Hardware-Config dieser Maschine und baut das System inkl.
-Home Manager.
+Home Manager. Bei einem neuen Laptop liest es das interne Display (EDID)
+aus und schreibt es mit dem Desktop in `hosts/<name>/default.nix`.
 
 ### Rückfrage zur Hardware-Config
 
@@ -69,8 +95,8 @@ falschen Host gewählt, die Maschine würde sonst nicht mehr booten.
 
 ### Danach im Repo sichern
 
-Nach einem neuen Laptop oder einer Neuinstallation (neue UUIDs) die
-Änderungen pushen. Die VM braucht das nicht.
+Nach einem neuen Laptop, einer Neuinstallation (neue UUIDs) oder einem
+Desktop-Wechsel die Änderungen pushen. Die VM braucht das nicht.
 
     gh auth login
     cd ~/nixos-dotfiles
@@ -79,8 +105,9 @@ Nach einem neuen Laptop oder einer Neuinstallation (neue UUIDs) die
 
 ## Manuelle Schritte nach der Installation
 
-- Google Drive (rclone-Login): siehe `home/apps/google-drive_README.md`
-- Brave-Sync, Bitwarden, NordVPN, Signal: jeweils anmelden
+- Google Drive: noch nicht in der Config (TODO)
+- NordVPN: siehe `nord-vpn.README.md`
+- Brave-Sync, Bitwarden, Signal: jeweils anmelden
 
 ## Manueller Fallback (falls das Skript nicht läuft)
 
@@ -105,5 +132,11 @@ Nach einem neuen Laptop oder einer Neuinstallation (neue UUIDs) die
 - Dock- und Monitor-Daten stehen einmal in `system/laptop/`. Nur das
   interne Display (`my.laptop.edid`) steht pro Maschine in
   `hosts/<name>/default.nix`.
-- Neovim-Plugins werden beim ersten Start geklont und sind noch nicht
-  gepinnt (siehe Hinweise zur Reproduzierbarkeit).
+- Neue Dateien vor dem Bauen mit `git add` bekannt machen, sonst sieht
+  der Flake sie nicht.
+
+## Hinweise zur Reproduzierbarkeit
+
+- Systempakete und Home Manager sind über `flake.lock` gepinnt.
+- Neovim-Plugins klont der Plugin-Manager beim ersten Start von GitHub,
+  ihre Versionen sind (noch) nicht gepinnt.

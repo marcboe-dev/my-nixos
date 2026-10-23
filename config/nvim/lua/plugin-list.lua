@@ -15,6 +15,5 @@ return {
     "mbbill/undotree",
     "ojroques/vim-oscyank",
     "captbaritone/better-indent-support-for-php-with-html",
-    "MeanderingProgrammer/render-markdown.nvim",
     "mikesmithgh/kitty-scrollback.nvim",
 }
