@@ -1,21 +1,25 @@
-{
-  config,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   imports = [
     ./system
   ];
 
+  # ── Nix ──────────────────────────────────────────────
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nixpkgs.config.allowUnfree = true;
+
+  # ── Boot ─────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  # Optional: NTFS-Sticks (exFAT/FAT/ext4 gehen schon über den Kernel)
+  boot.supportedFilesystems = ["ntfs"];
 
+  # ── Netzwerk ─────────────────────────────────────────
   networking.networkmanager.enable = true;
 
+  # ── Zeit & Sprache ───────────────────────────────────
   time.timeZone = "Europe/Vienna";
 
   i18n.defaultLocale = "en_US.UTF-8";
-
   i18n.extraLocaleSettings = {
     LC_ADDRESS = "de_AT.UTF-8";
     LC_IDENTIFICATION = "de_AT.UTF-8";
@@ -28,27 +32,7 @@
     LC_TIME = "de_AT.UTF-8";
   };
 
-  # services.desktopManager.gnome.enable = true;
-
-  services.displayManager.ly.enable = true;
-
-  # Configure keymap in X11
-  # services.xserver.xkb = {
-  #   layout = "at";
-  #   variant = "";
-  # };
-
-  services.printing.enable = true;
-
-  services.pulseaudio.enable = false; # Enable sound with pipewire.
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
+  # ── Benutzer ─────────────────────────────────────────
   users.groups.nordvpn = {};
 
   users.users."marc" = {
@@ -61,31 +45,24 @@
     ];
   };
 
-  programs.firefox.enable = true;
+  # ── Desktop & Anzeige ────────────────────────────────
+  # services.desktopManager.gnome.enable = true;
+
+  services.displayManager.ly.enable = true;
+
+  # Configure keymap in X11
+  # services.xserver.xkb = {
+  #   layout = "at";
+  #   variant = "";
+  # };
 
   programs.dconf.enable = true; # for gtk-windows to remember their size
-
-  nixpkgs.config.allowUnfree = true;
-
-  # setze neovim als Standardeditor
-  programs.neovim = {
-    enable = true;
-    defaultEditor = true; # setzt EDITOR=nvim für die ganze Session
-  };
-
-  environment.systemPackages = with pkgs; [
-    wget
-    git
-  ];
-
-  system.stateVersion = "26.05";
 
   fonts.packages = with pkgs; [
     nerd-fonts.jetbrains-mono
   ];
 
-  nix.settings.experimental-features = ["nix-command" "flakes"];
-
+  # ── Tastatur ─────────────────────────────────────────
   # Caps Lock: click once = Esc, hold = Ctrl
   services.keyd = {
     enable = true;
@@ -97,8 +74,40 @@
     };
   };
 
-  # Externe Drives (zB USB, externe Festplatte)
-  services.udisks2.enable = true;
-  # Optional: NTFS-Sticks (exFAT/FAT/ext4 gehen schon über den Kernel)
-  boot.supportedFilesystems = ["ntfs"];
+  # ── Audio ────────────────────────────────────────────
+  services.pulseaudio.enable = false; # Enable sound with pipewire.
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+
+  # ── Hardware & Laufwerke ─────────────────────────────
+  services.printing.enable = true;
+
+  services.udisks2.enable = true; # Externe Drives (zB USB, externe Festplatte)
+
+  # ── Programme ────────────────────────────────────────
+  programs.firefox.enable = true;
+
+  programs.neovim = {
+    # setze neovim als Standardeditor
+    enable = true;
+    defaultEditor = true; # setzt EDITOR=nvim für die ganze Session
+  };
+
+  environment.systemPackages = with pkgs; [
+    wget
+    git
+    man-pages # Linux-/glibc-Manpages: printf(3), malloc(3), open(2) …
+    man-pages-posix # POSIX-Varianten (Sektion 0p/1p/3p)
+  ];
+
+  # ── Dokumentation ────────────────────────────────────
+  documentation.dev.enable = true; #installiert auch Entwickler-Manpages (devman/devdoc) der Pakete
+
+  # ── State Version (nicht ändern) ─────────────────────
+  system.stateVersion = "26.05";
 }

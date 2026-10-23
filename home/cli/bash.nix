@@ -13,13 +13,13 @@
        export VISUAL=nvim
 
        export MANPAGER="nvim +Man!"
-       export MANPAGER="sh -c 'col -bx | bat -l man -p'"
     '';
   };
 
   home.packages = with pkgs; [
     bat
     btop
+    unrar
   ];
 
   programs.zoxide.enable = true;
