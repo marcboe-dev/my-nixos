@@ -24,5 +24,20 @@
 
     # Systemweit, damit auch qtile und rofi die Variable sehen
     environment.sessionVariables.TERMINAL = config.my.terminal;
+
+    # GLib/GIO (Thunar, Brave, Rofi-drun, xdg-open …) startet Apps mit
+    # "Terminal=true" (z.B. nvim.desktop) NICHT über $TERMINAL, sondern über
+    # xdg-terminal-exec bzw. eine feste Liste (gnome-terminal, xterm …).
+    # kitty/alacritty stehen nicht auf der Liste → "Unable to find terminal".
+    xdg.terminal-exec = {
+      enable = true;
+      settings.default = [
+        (
+          if config.my.terminal == "alacritty"
+          then "Alacritty.desktop" # Desktop-File heißt groß geschrieben
+          else "kitty.desktop"
+        )
+      ];
+    };
   };
 }
