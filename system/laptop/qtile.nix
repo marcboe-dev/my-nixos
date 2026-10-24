@@ -140,7 +140,4 @@ in
     services.picom.enable = true;
     systemd.user.services.picom.serviceConfig.ExecStart =
       lib.mkForce "${pkgs.picom}/bin/picom --config ${picomConf}";
-
-    # Benachrichtigungen unter X11 (unter niri macht das noctalia)
-    home-manager.users.marc.services.dunst.enable = true;
   }

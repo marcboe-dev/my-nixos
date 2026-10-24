@@ -30,6 +30,9 @@ lib.mkIf (config.my.desktop == "qtile") {
     };
   };
 
+  # Benachrichtigungen unter X11 (unter niri macht das noctalia)
+  home-manager.users.marc.services.dunst.enable = true;
+
   # Workaround: nixpkgs baut qtile 0.37.1 gegen wlroots 0.19, braucht aber 0.20.
   # Gehört zu qtile, deshalb nur aktiv, wenn qtile auch benutzt wird.
   # Wenn nixpkgs das selbst behoben hat, kann dieser Block weg.

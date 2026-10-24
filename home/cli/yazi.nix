@@ -74,6 +74,12 @@
         run = "plugin mount";
         desc = "Mount manager";
       }
+
+      {
+        on = "?";
+        run = "help";
+        desc = "Alle Shortcuts anzeigen";
+      }
     ];
   };
 }
