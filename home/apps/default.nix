@@ -6,5 +6,6 @@
     ./sioyek.nix
     ./signal.nix
     ./celluloid.nix
+    ./imv.nix
   ];
 }
