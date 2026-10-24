@@ -137,7 +137,8 @@ window-rule {
 binds {
 
     // Launcher
-    Mod+D hotkey-overlay-title="Run an Application: Rofi" { spawn "rofi" "-show" "drun"; }
+    Mod+D hotkey-overlay-title="Run an Application: Rofi" { spawn-sh "pkill -x rofi || rofi -show drun"; }
+
 
     // System
     Mod+Shift+B hotkey-overlay-title="Toggle Noctalia Bar" { spawn "noctalia" "msg" "bar-toggle"; }

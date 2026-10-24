@@ -52,7 +52,7 @@ keys = [
     Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "d", lazy.spawn("rofi -show drun -show-icons"), desc='Run Launcher'),
+    Key([mod], "d", lazy.spawn("pkill -x rofi || rofi -show drun", shell=True), desc='Run Launcher'),
         KeyChord([mod], "p", [
         Key([], "p", lazy.spawn("rofi-repos"),     desc="Projekte -> tmux"),
         Key([], "s", lazy.spawn("rofi-sessions"),  desc="tmux-Sessions"),
