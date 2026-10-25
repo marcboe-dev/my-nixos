@@ -65,8 +65,10 @@
             --conflict-resolve newer \
             --max-lock 2m \
             --drive-skip-gdocs \
+            --exclude ".git/**" \
+            --exclude ".obsidian/workspace*.json" \
             --verbose; then
-          touch "$marker"
+          if [ -n "$(ls -A "$local_dir")" ]; then touch "$marker"; fi
           ok+=("$folder")
         else
           failed+=("$folder")

@@ -5,8 +5,11 @@ vim.keymap.set("n", "<leader>cd", vim.cmd.Ex)
 vim.keymap.set("i", "jk", "<Esc>", { noremap = true, silent = true })
 vim.keymap.set("i", "kj", "<Esc>", { noremap = true, silent = true })
 
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Alt Up/Down in vscode
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv") -- Shift JK Up/Down in vscode
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
+vim.keymap.set("x", "H", "<gv") -- Shift HL Indent left/right
+vim.keymap.set("x", "L", ">gv")
 
 vim.keymap.set("n", "J", "mzJ`z")       -- Remap joining lines
 vim.keymap.set("n", "<C-d>", "<C-d>zz") -- Keep cursor in place while moving up/down page
@@ -46,8 +49,15 @@ vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 vim.keymap.set('n', '<leader>y', '<Plug>OSCYankOperator')
 vim.keymap.set('v', '<leader>y', '<Plug>OSCYankVisual')
 
--- reload without exiting vim
-vim.keymap.set("n", "<leader>rl", "<cmd>source ~/.config/nvim/init.lua<cr>")
+-- reload without exiting vim (Lua-Cache für config.* leeren)
+vim.keymap.set("n", "<leader>rl", function()
+    for name in pairs(package.loaded) do
+        if name:match("^config%.") then package.loaded[name] = nil end
+    end
+    require("config.options")
+    require("config.keybinds")
+    vim.notify("nvim config neu geladen")
+end)
 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
 
