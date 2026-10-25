@@ -48,6 +48,11 @@ output "eDP-1" {
     position x=0 y=0
 }
 
+output "Samsung Electric Company SAMSUNG 0x00000001" {
+    scale 1.5
+    position x=1536 y=0
+}
+
 output "Lenovo Group Limited T24m-20 V908ZPP0" {
     mode "1920x1080@74.986"
     scale 1.25
