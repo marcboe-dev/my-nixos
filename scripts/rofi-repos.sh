@@ -22,8 +22,9 @@ if [ -n "${TMUX:-}" ]; then
 fi
 
 if [ "$one_terminal" = 1 ]; then
-  pkill -x "$terminal" 2>/dev/null || true
+  pkill -f -- '--class dfr\.tmux' 2>/dev/null || true
+
   sleep 0.1
 fi
 
-exec "$terminal" -e tmux new-session -A -s "$session" -c "$dir"
+exec "$terminal" --class dfr.tmux -e tmux new-session -A -s "$session" -c "$dir"   

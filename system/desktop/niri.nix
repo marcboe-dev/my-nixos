@@ -17,7 +17,11 @@ lib.mkIf (config.my.desktop == "niri") {
   # und stellt sie beim Login wieder her.
   services.nirinit = {
     enable = true;
-    settings.skip.apps = [];
+    settings = {
+      # Projekt-Terminals (rofi) mit der letzten tmux-Session neu öffnen
+      launch."dfr.tmux" = "kitty --class dfr.tmux -e tmux-attach-last";
+      skip.apps = [];
+    };
   };
 
   # Electron/Chromium-Apps (Brave, Obsidian, Signal) nativ unter Wayland
