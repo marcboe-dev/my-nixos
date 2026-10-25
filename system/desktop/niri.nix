@@ -13,6 +13,13 @@
 lib.mkIf (config.my.desktop == "niri") {
   programs.niri.enable = true; # legt die niri-Session für ly an
 
+  # Session-Manager: speichert alle 5 Min. Fenster/Workspaces
+  # und stellt sie beim Login wieder her.
+  services.nirinit = {
+    enable = true;
+    settings.skip.apps = [];
+  };
+
   # Electron/Chromium-Apps (Brave, Obsidian, Signal) nativ unter Wayland
   # starten statt über XWayland. Unter X11 hätte das keinen Sinn.
   environment.sessionVariables.NIXOS_OZONE_WL = "1";

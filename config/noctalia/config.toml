@@ -14,6 +14,8 @@ mode = "dark"
 source = "builtin"
 builtin = "Tokyo-Night"
 
+# --- wallpaper ------------------------------------
+
 [wallpaper]
 enabled = true
 fill_mode = "crop"
@@ -21,3 +23,49 @@ directory = "/home/marc/nixos-dotfiles/walls"
 
 [wallpaper.default]
 path = "/home/marc/nixos-dotfiles/walls/wall1.png"
+
+# --- osd ------------------------------------
+# OSD = "On-Screen Display": kurze Einblendung direkt auf dem Bildschirm,
+# die nach ein paar Sekunden von selbst verschwindet (z. B. beim Ändern
+# von Lautstärke oder beim Drücken von Caps/Num Lock).
+# lock_keys = false blendet nur die Meldungen für Caps/Num/Scroll Lock aus;
+# die Lautstärke-Anzeige bleibt erhalten.
+[osd.kinds]
+lock_keys = false
+
+# --- weather ------------------------------------
+
+# Standort für Wetter, Night Light und Theme-Auto.
+# address wird in Koordinaten umgewandelt (Geocoding), solange auto_locate = false.
+[location]
+auto_locate = false
+address = "Wien, Österreich"
+
+# Wetterdaten kommen von Open-Meteo, Aktualisierung alle 30 Minuten.
+[weather]
+enabled = true
+refresh_minutes = 30
+unit = "metric"
+
+# --- calender ------------------------------------
+
+# Kalender: synchronisiert Termine aus Online-Konten in den Calendar-Tab.
+[calendar]
+enabled = true
+refresh_minutes = 15
+
+# Google-Konto. "google" ist nur ein lokaler Name für Noctalia
+# (nur Kleinbuchstaben, Ziffern und _ erlaubt).
+[calendar.account.google]
+type = "google"
+name = "Google"
+
+# Glocken-Widget (Benachrichtigungs-Historie) aus der Bar entfernen.
+# Pop-ups erscheinen weiterhin, nur Symbol und Ungelesen-Punkt verschwinden.
+[widget.notifications]
+enabled = false
+
+# Media-Widget (MPRIS: zeigt den aktuell spielenden Titel) aus der Bar entfernen.
+# Steuerung bleibt über die Media-Tasten und das Control Center möglich.
+[widget.media]
+enabled = false

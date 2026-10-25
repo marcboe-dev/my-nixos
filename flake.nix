@@ -7,12 +7,16 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs"; # versions nixpkgs & home-manger same
     };
+    nirinit = {
+      url = "github:amaanq/nirinit";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
-    self,
     nixpkgs,
     home-manager,
+    nirinit,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -31,6 +35,7 @@
         system = "x86_64-linux";
         modules = [
           ./configuration.nix # gemeinsam
+          nirinit.nixosModules.nirinit
           (./hosts + "/${name}") # rechnerspezifisch
           {networking.hostName = "nixos-${name}";}
           home-manager.nixosModules.home-manager
