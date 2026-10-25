@@ -28,6 +28,7 @@ in
     home.packages = with pkgs; [
       noctalia # Bar / Shell, wird in config.kdl gestartet
       swaybg # Wallpaper unter Wayland
+      wl-clipboard # wl-copy für tmux (Ctrl+Shift+Enter)
       (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils procps])
       (mkScript "dfr-launch-or-focus" [jq])
       (mkScript "dfr-launch-or-focus-tui" [jq kitty])
