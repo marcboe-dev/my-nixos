@@ -134,6 +134,13 @@ window-rule {
     min-height 300
 }
 
+// Datei-Dialoge (Öffnen/Speichern) des GNOME-Portals schweben,
+// sonst verschwinden sie hinter schwebenden Fenstern wie Obsidians Vault-Auswahl.
+window-rule {
+    match app-id=r#"^org\.gnome\.Nautilus$"#
+    open-floating true
+}
+
 binds {
 
     // Launcher
