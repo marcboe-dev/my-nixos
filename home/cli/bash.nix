@@ -5,7 +5,11 @@
       btw = "echo i use nixos-btw";
       nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles";
       vi = "nvim";
+
       tn = ''tmux new-session -A -s "$(basename "$PWD" | tr .: __)"'';
+      ta = "tmux attach"; # zurück zur zuletzt benutzten Session
+      tk = "tmux kill-session -t"; # tk c_programming
+      tkill = "tmux kill-server; rm -f ~/.local/share/tmux/resurrect/last";
     };
     initExtra = ''
       PS1_FULL="\[\e]133;A\a\]\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
