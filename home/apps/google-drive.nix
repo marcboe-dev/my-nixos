@@ -13,6 +13,7 @@
   # ============================================================
   syncFolders = [
     "Documents/recipes"
+    "Documents/obsidian"
   ];
 
   bisync = pkgs.writeShellApplication {
