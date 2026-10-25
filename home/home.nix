@@ -13,6 +13,7 @@
     rofi = "rofi";
     tmux = "tmux";
     rmpc = "rmpc";
+    cheatsheet = "cheatsheet";
     ${term} = term; # VM: alacritty, T14: kitty
   };
 in {
