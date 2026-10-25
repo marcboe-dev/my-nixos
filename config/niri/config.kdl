@@ -153,6 +153,7 @@ binds {
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 
     Mod+P hotkey-overlay-title="Launcher: Projekte / tmux / Bookmarks" { spawn "rofi-launch"; }
+    Mod+Alt+S hotkey-overlay-title="Layout speichern (nirinit)" { spawn "nirinit-save"; }
 
     // Screenshots
     Mod+S            hotkey-overlay-title="Screenshot (region)" { spawn "dfr-screenshot" "region"; }

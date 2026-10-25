@@ -129,8 +129,9 @@ in {
       };
     };
 
-    # Benachrichtigung bei niedrigem Akku
-    systemd.user.services.battery-notify = {
+    # Benachrichtigung bei niedrigem Akku (qtile)
+    # Unter niri warnt noctalia selbst (config/noctalia/config.toml → [battery]).
+    systemd.user.services.battery-notify = lib.mkIf (config.my.desktop == "qtile") {
       description = "Battery notifications at 20% and 10%";
       wantedBy = ["graphical-session.target"];
       after = ["graphical-session.target"];
