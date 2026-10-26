@@ -11,5 +11,5 @@ case "$choice" in
   '[P]rojects')     exec rofi-repos ;;
   '[S]essions')     exec rofi-sessions ;;
   '[B]ookmarks')    exec rofi-bookmarks ;;
-  '[G]oogleDrive') exec gdrive-bisync ;;
+  '[G]oogle Drive') exec gdrive-bisync ;;
 esac
