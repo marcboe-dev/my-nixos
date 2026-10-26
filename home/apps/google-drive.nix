@@ -91,45 +91,28 @@
 in {
   home.packages = [pkgs.rclone bisync];
 
-  # Thunar: benutzerdefinierte Aktionen (Terminal + Google Drive Sync)
-  xdg.configFile."Thunar/uca.xml".text = ''
-    <?xml version="1.0" encoding="UTF-8"?>
-    <actions>
-    <action>
-      <icon>utilities-terminal</icon>
-      <name>Open Terminal Here</name>
-      <submenu></submenu>
-      <unique-id>1792620919862406-1</unique-id>
-      <command>exo-open --working-directory %f --launch TerminalEmulator</command>
-      <description>Example for a custom action</description>
-      <range></range>
-      <patterns>*</patterns>
-      <startup-notify/>
-      <directories/>
-    </action>
-    <action>
-      <icon>view-refresh</icon>
-      <name>Google Drive synchronisieren</name>
-      <submenu></submenu>
-      <unique-id>1792620919862406-2</unique-id>
-      <command>${bisync}/bin/gdrive-bisync</command>
-      <description>Sync all bisync folders with Google Drive now</description>
-      <range></range>
-      <patterns>*</patterns>
-      <directories/>
-      <audio-files/>
-      <image-files/>
-      <other-files/>
-      <text-files/>
-      <video-files/>
-    </action>
-    </actions>
-  '';
-
-  # Thunar: Werkzeugleiste (Split-View, Terminal, Google-Drive-Sync)
-  xfconf.settings.thunar = {
-    "last-toolbar-items" = "menu:0,back:1,forward:1,open-parent:1,open-home:1,new-tab:0,new-window:0,toggle-split-view:1,undo:1,redo:1,zoom-out:0,zoom-in:0,zoom-reset:0,view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,location-bar:1,reload:0,search:1,uca-action-1792620919862406-1:1,uca-action-1792620919862406-2:1";
-  };
+  # Thunar: Rechtsklick-Aktion „Google Drive synchronisieren“
+  # (wird in system/thunar.nix zur uca.xml zusammengebaut)
+  my.thunar.actions = [
+    ''
+      <action>
+        <icon>view-refresh</icon>
+        <name>Google Drive synchronisieren</name>
+        <submenu></submenu>
+        <unique-id>1792620919862406-2</unique-id>
+        <command>${bisync}/bin/gdrive-bisync</command>
+        <description>Sync all bisync folders with Google Drive now</description>
+        <range></range>
+        <patterns>*</patterns>
+        <directories/>
+        <audio-files/>
+        <image-files/>
+        <other-files/>
+        <text-files/>
+        <video-files/>
+      </action>
+    ''
+  ];
 
   # --- Mount: ganzes Drive unter ~/GoogleDrive ---
   systemd.user.services.gdrive-mount = {
