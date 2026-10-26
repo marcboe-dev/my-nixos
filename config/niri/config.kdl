@@ -192,7 +192,9 @@ binds {
     // ------------------------------------------------------------------------
     //  SYSTEM & SKRIPTE  —  Mod + Ctrl + Buchstabe
     // ------------------------------------------------------------------------
-    Mod+Ctrl+Q       hotkey-overlay-title="Bildschirm sperren: swaylock" { spawn "swaylock"; }
+    Mod+Ctrl+Q       hotkey-overlay-title="Bildschirm sperren" { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+Ctrl+Shift+Q hotkey-overlay-title="Sperren + Standby (Suspend)" { spawn "noctalia" "msg" "session" "lock-and-suspend"; }
+    Mod+Ctrl+K       hotkey-overlay-title="Kochmodus: Bildschirm bleibt an (ein/aus)" { spawn "noctalia" "msg" "caffeine-toggle"; }
     Mod+Ctrl+B       hotkey-overlay-title="Noctalia Bar ein/aus" { spawn "noctalia" "msg" "bar-toggle"; }
     Mod+Ctrl+G       hotkey-overlay-title="Dotfiles: git pull" { spawn "dotfiles-sync"; }
     Mod+Ctrl+S       hotkey-overlay-title="Layout speichern (nirinit)" { spawn "nirinit-save"; }
@@ -293,8 +295,6 @@ binds {
     //  MONITORE  —  Mod + Ctrl + Richtung  (+ Shift = Fenster mitnehmen)
     // ------------------------------------------------------------------------
     Mod+Ctrl+H     { focus-monitor-left; }
-    Mod+Ctrl+J     { focus-monitor-down; }
-    Mod+Ctrl+K     { focus-monitor-up; }
     Mod+Ctrl+L     { focus-monitor-right; }
     Mod+Ctrl+Left  { focus-monitor-left; }
     Mod+Ctrl+Down  { focus-monitor-down; }

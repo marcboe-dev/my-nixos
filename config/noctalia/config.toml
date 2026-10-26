@@ -69,3 +69,21 @@ enabled = false
 # Steuerung bleibt über die Media-Tasten und das Control Center möglich.
 [widget.media]
 enabled = false
+
+# --- lockscreen / idle ------------------------------------
+[lockscreen]
+enabled = true
+lock_before_suspend = true # beim Zuklappen/Suspend vorher sperren
+
+# Nach 15 min ohne Eingabe sperren
+[idle.behavior.lock]
+action = "lock"
+timeout = 600
+enabled = true
+
+# Bildschirm aus: entsperrt nach 11 min, gesperrt schon nach 10 s
+[idle.behavior.screen-off]
+action = "screen_off"
+timeout = 660
+locked_timeout = 10
+enabled = true
