@@ -7,6 +7,17 @@
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nixpkgs.config.allowUnfree = true;
 
+  # Automatisch aufräumen: wöchentlich, alles älter als 7 Tage
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
+  nix.optimise.automatic = true; # Doppelte Dateien im Store zusammenführen (spart Platz)
+
+  boot.loader.systemd-boot.configurationLimit = 10; # Maximal 10 Einträge im Bootmenü (verhindert volle /boot-Partition)
+
   # ── Boot ─────────────────────────────────────────────
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
