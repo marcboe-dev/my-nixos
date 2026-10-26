@@ -45,6 +45,8 @@ in {
         "<Right>" = "pan -50 0";
         "<Up>" = "pan 0 50";
         "<Down>" = "pan 0 -50";
+        "<Ctrl+r>" = "rotate by 90"; # im Uhrzeigersinn
+        "<Ctrl+Shift+R>" = "rotate by -90"; # optional: gegen den Uhrzeigersinn
         "<Shift+question>" = "exec ${imvHelp}";
       };
     };
