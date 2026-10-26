@@ -53,11 +53,12 @@ keys = [
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "d", lazy.spawn("pkill -x rofi || rofi -show drun", shell=True), desc='Run Launcher'),
-        KeyChord([mod], "p", [
+    KeyChord([mod], "p", [
         Key([], "p", lazy.spawn("rofi-repos"),     desc="Projekte -> tmux"),
         Key([], "s", lazy.spawn("rofi-sessions"),  desc="tmux-Sessions"),
         Key([], "b", lazy.spawn("rofi-bookmarks"), desc="Bookmarks"),
     ], name="rofi"),
+    Key([mod, "mod1"], "g", lazy.spawn("dotfiles-sync"), desc="Dotfiles: git pull"),
     Key(
         [mod],
         "s",

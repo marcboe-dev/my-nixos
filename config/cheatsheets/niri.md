@@ -5,3 +5,6 @@ mod+alt+t               Toggle Bildschirmwiederholrate: 24 (Filme), 50(Europa), 
 ### Movement
 Mod+Shift+Ctrl+H/L      schickt Fenster <- oder ->
 Mod+Shift+H/L           nur Fokus auf anderen Bildschirm
+
+## Misc
+mod+alt+G               git fetch, git status, git pull

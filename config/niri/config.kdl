@@ -153,6 +153,8 @@ binds {
     Mod+P hotkey-overlay-title="Launcher: Projekte / tmux / Bookmarks" { spawn "rofi-launch"; }
     Mod+Alt+S hotkey-overlay-title="Layout speichern (nirinit)" { spawn "nirinit-save"; }
     Mod+Alt+T hotkey-overlay-title="TV: Bildwiederholrate wechseln" { spawn "tv-hz"; }
+    Mod+Alt+G hotkey-overlay-title="Dotfiles: git pull" { spawn "dotfiles-sync"; }
+
 
     // Screenshots
     Mod+S            hotkey-overlay-title="Screenshot (region)" { spawn "dfr-screenshot" "region"; }
