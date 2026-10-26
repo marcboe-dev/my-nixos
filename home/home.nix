@@ -37,6 +37,13 @@ in {
 
   programs.home-manager.enable = true; # Let Home Manager install and manage itself.
 
+  # Automatisch aufräumen: deine User-Profile (Home Manager), wöchentlich, älter als 7 Tage
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
+
   # Benachrichtigungen bei external Drives
   services.udiskie = {
     enable = true;
