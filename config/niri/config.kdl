@@ -201,8 +201,6 @@ binds {
     Mod+Ctrl+T       hotkey-overlay-title="TV: Bildwiederholrate wechseln" { spawn "tv-hz"; }
     Mod+Ctrl+P       hotkey-overlay-title="Monitore ausschalten" { power-off-monitors; }
 
-    // Notbremse: Shortcut-Inhibit von Apps (VMs, Remote-Desktop) aufheben
-    Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     // niri beenden (mit Bestätigungsdialog)
     Mod+Shift+E      { quit; }
