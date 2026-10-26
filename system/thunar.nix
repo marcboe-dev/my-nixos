@@ -72,7 +72,7 @@
       ''
         <action>
           <icon>package-x-generic</icon>
-          <name>Hier entpacken (unar)</name>
+          <name>Extract here (unar)</name>
           <submenu></submenu>
           <unique-id>1792620919862406-3</unique-id>
           <command>sh -c '${pkgs.unar}/bin/unar -o "$(dirname "$1")" "$1" &amp;&amp; ${pkgs.libnotify}/bin/notify-send "Entpackt" "$(basename "$1")" || ${pkgs.libnotify}/bin/notify-send -u critical "Entpacken fehlgeschlagen" "$(basename "$1")"' _ %f</command>

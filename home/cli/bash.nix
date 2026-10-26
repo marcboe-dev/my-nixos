@@ -5,6 +5,7 @@
       btw = "echo i use nixos-btw";
       nrs = "sudo nixos-rebuild switch --flake ~/nixos-dotfiles";
       vi = "nvim";
+      lg = "lazygit";
 
       tn = ''tmux new-session -A -s "$(basename "$PWD" | tr .: __)"'';
       ta = "tmux attach"; # zurück zur zuletzt benutzten Session
