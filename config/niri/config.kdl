@@ -42,28 +42,21 @@ input {
 }
 
 output "eDP-1" {
-    mode "1920x1080@120.030"
     scale 1.25
     transform "normal"
-    position x=0 y=0
+    position x=1280 y=0
 }
 
 output "Samsung Electric Company SAMSUNG 0x00000001" {
     scale 1.5
-    position x=1536 y=0
+    position x=0 y=0
 }
 
 output "Lenovo Group Limited T24m-20 V908ZPP0" {
     mode "1920x1080@74.986"
     scale 1.25
-    position x=1536 y=0
+    position x=2816 y=0
 }
-
-switch-events {
-    lid-close { spawn "niri" "msg" "output" "eDP-1" "off"; }
-    lid-open  { spawn "niri" "msg" "output" "eDP-1" "on"; }
-}
-
 
 layout {
     gaps 0
@@ -159,6 +152,7 @@ binds {
 
     Mod+P hotkey-overlay-title="Launcher: Projekte / tmux / Bookmarks" { spawn "rofi-launch"; }
     Mod+Alt+S hotkey-overlay-title="Layout speichern (nirinit)" { spawn "nirinit-save"; }
+    Mod+Alt+T hotkey-overlay-title="TV: Bildwiederholrate wechseln" { spawn "tv-hz"; }
 
     // Screenshots
     Mod+S            hotkey-overlay-title="Screenshot (region)" { spawn "dfr-screenshot" "region"; }

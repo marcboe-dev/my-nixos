@@ -33,6 +33,12 @@
     runtimeInputs = [pkgs.libnotify pkgs.coreutils];
     text = builtins.readFile ../../scripts/battery_notify.sh;
   };
+
+  tvHz = pkgs.writeShellApplication {
+    name = "tv-hz";
+    runtimeInputs = [pkgs.jq pkgs.libnotify pkgs.coreutils];
+    text = builtins.readFile ../../scripts/tv_hz.sh;
+  };
 in {
   # imports dürfen nie in lib.mkIf stehen, qtile.nix prüft selbst
   imports = [./qtile.nix];
@@ -84,6 +90,8 @@ in {
       pkgs.overskride # grafischer Bluetooth-Manager
       pkgs.nordvpn
       pkgs.libnotify
+      tvHz # Fernseher-Hz durchschalten (Mod+Alt+T)
+      pkgs.wdisplays # grafische Bildschirm-Anordnung (temporär, Feste Werte in niri config.kdl)
     ];
 
     # Soundprofil mit Laptop-Lautsprechern (nur wenn speakerCard gesetzt)
@@ -104,6 +112,13 @@ in {
 
     # Akkustatus für Bar-Widget und `upower -i`
     services.upower.enable = true;
+
+    # Hardware-Videobeschleunigung (Intel, VA-API) für Brave/YouTube
+    hardware.graphics = {
+      enable = true;
+      extraPackages = [pkgs.intel-media-driver];
+    };
+    environment.sessionVariables.LIBVA_DRIVER_NAME = "iHD";
 
     hardware.bluetooth = {
       enable = true;

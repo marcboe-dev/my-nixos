@@ -13,12 +13,13 @@
       {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # vimium
       {id = "cakobppopkpmmglabcdcklncbckjpkcl";} # voila - KI
       {id = "hdojabcconedhifhdaeifnkdagccaflk";} # Youtube-Transcript Extractor
+      {id = "omkfmpieigblcllmkgbflkikinpkodlk";} # enhanced-h264ify (AV1 blockieren)
     ];
 
     commandLineArgs = [
       "--enable-accelerated-video-decode"
       "--force-dark-mode"
-      "--disable-features=TouchpadOverscrollHistoryNavigation"
+      "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
     ];
   };
 
