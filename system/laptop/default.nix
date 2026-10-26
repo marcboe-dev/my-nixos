@@ -92,6 +92,7 @@ in {
       pkgs.libnotify
       tvHz # Fernseher-Hz durchschalten (Mod+Alt+T)
       pkgs.wdisplays # grafische Bildschirm-Anordnung (temporär, Feste Werte in niri config.kdl)
+      pkgs.gnome-disk-utility # „Laufwerke“: USB-Sticks formatieren/partitionieren
     ];
 
     # Soundprofil mit Laptop-Lautsprechern (nur wenn speakerCard gesetzt)
