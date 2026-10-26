@@ -16,3 +16,13 @@ ctrl + f    gehe Wort Ri Zeilenanfang
 ctrl + w    lösche Wort vor Cursor (Ri Zeilenanfang)
 alt + d     lösche Wrot hinter Cursor (Ri Zeilenende) 
 
+## externe Bildschirme
+### Bild
+Mod+Ctrl+T               Toggle Bildschirmwiederholrate: 24 (Filme), 50(Europa), 60(Standard)Hz
+
+### Movement
+Mod+Ctrl+Shift+H/L      schickt Fenster <- oder ->
+Mod+Shift+H/L           nur Fokus auf anderen Bildschirm
+
+## Misc
+Mod+Ctrl+G               git fetch, git status, git pull
