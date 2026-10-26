@@ -53,3 +53,27 @@ set.incsearch = true
 
 -- faster cursor hold
 set.updatetime = 50
+
+-- Nach dem Öffnen einer Web-URL das Brave-Fenster in niri fokussieren
+local function focus_brave()
+    if not vim.env.NIRI_SOCKET then return end -- nur unter niri (nicht qtile)
+    vim.system({ "niri", "msg", "--json", "windows" }, { text = true }, function(res)
+        if res.code ~= 0 then return end
+        local id
+        for _, w in ipairs(vim.json.decode(res.stdout)) do
+            if (w.app_id or ""):match("^brave%-browser$") then id = w.id end
+        end
+        if id then
+            vim.system({ "niri", "msg", "action", "focus-window", "--id", tostring(id) })
+        end
+    end)
+end
+
+vim.ui._orig_open = vim.ui._orig_open or vim.ui.open -- schützt vor doppeltem Wrappen bei <leader>rl
+vim.ui.open = function(path, opt)
+    local cmd, err = vim.ui._orig_open(path, opt)
+    if cmd and type(path) == "string" and path:match("^https?://") then
+        vim.defer_fn(focus_brave, 300)
+    end
+    return cmd, err
+end
