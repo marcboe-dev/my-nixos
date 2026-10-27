@@ -39,7 +39,7 @@ lock_keys = false
 # address wird in Koordinaten umgewandelt (Geocoding), solange auto_locate = false.
 [location]
 auto_locate = false
-address = "Wien, Österreich"
+address = "Innsbruck, Österreich"
 
 # Wetterdaten kommen von Open-Meteo, Aktualisierung alle 30 Minuten.
 [weather]
