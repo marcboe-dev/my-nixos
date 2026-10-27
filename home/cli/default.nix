@@ -5,6 +5,5 @@
     ./neovim.nix
     ./tmux.nix
     ./yazi.nix
-    ./rmpc.nix
   ];
 }

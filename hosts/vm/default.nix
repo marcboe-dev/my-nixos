@@ -1,5 +1,8 @@
 {...}: {
-  imports = [./hardware-configuration.nix];
+  imports = [
+    ./hardware-configuration.nix
+    ../../profiles/workstation.nix
+  ];
 
   # Die VM läuft immer mit X11 + qtile (unter VMware flüssiger als Wayland).
   # install.sh ignoriert bei der VM jede andere Desktop-Angabe.

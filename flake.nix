@@ -34,7 +34,7 @@
       lib.nixosSystem {
         system = "x86_64-linux";
         modules = [
-          ./configuration.nix # gemeinsam
+          ./profiles/base.nix # gemeinsam für alle; die Rolle wählt der Host selbst
           nirinit.nixosModules.nirinit
           (./hosts + "/${name}") # rechnerspezifisch
           {networking.hostName = "nixos-${name}";}
@@ -43,7 +43,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              users.marc = import ./home/home.nix;
+              users.marc = import ./home/base.nix; # Workstation-Teil hängt profiles/workstation.nix an
               backupFileExtension = "backup";
             };
           }

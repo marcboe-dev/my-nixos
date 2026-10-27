@@ -1,10 +1,5 @@
-{
-  pkgs,
-  lib,
-  osConfig,
-  ...
-}: {
-  home.packages = lib.optional (osConfig.my.terminal == "alacritty") pkgs.ueberzugpp;
+{pkgs, ...}: {
+  # ueberzugpp (Bildvorschau unter Alacritty) kommt aus home/workstation.nix
 
   programs.yazi = {
     enable = true;

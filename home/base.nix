@@ -1,25 +1,21 @@
-{
-  config,
-  osConfig,
-  ...
-}: let
+# ─────────────────────────────────────────────────────────────────────
+# Home-Manager-Basis für JEDEN Rechner (Workstation und Server)
+#
+# Wird in flake.nix für alle Hosts geladen. Das Workstation-Profil hängt
+# zusätzlich home/workstation.nix an (siehe profiles/workstation.nix).
+# ─────────────────────────────────────────────────────────────────────
+{config, ...}: let
   dotfiles = "${config.home.homeDirectory}/nixos-dotfiles/config";
   create_symlink = path: config.lib.file.mkOutOfStoreSymlink path;
-  term = osConfig.my.terminal;
 
-  # Ordner aus config/ → ~/.config/<name>
+  # Ordner aus config/ → ~/.config/<n>
   configs = {
     nvim = "nvim";
-    rofi = "rofi";
     tmux = "tmux";
-    rmpc = "rmpc";
     cheatsheets = "cheatsheets";
-    ${term} = term; # VM: alacritty, T14: kitty
   };
 in {
   imports = [
-    ./desktop
-    ./apps
     ./cli
   ];
 
@@ -42,13 +38,5 @@ in {
     automatic = true;
     dates = "weekly";
     options = "--delete-older-than 7d";
-  };
-
-  # Benachrichtigungen bei external Drives
-  services.udiskie = {
-    enable = true;
-    automount = true;
-    notify = true;
-    tray = "never"; # kein Tray nötig
   };
 }

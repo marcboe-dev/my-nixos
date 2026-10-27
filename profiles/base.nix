@@ -1,8 +1,16 @@
+# ─────────────────────────────────────────────────────────────────────
+# Basis für JEDEN Rechner (Workstation und Server)
+#
+# Wird im flake.nix für alle Hosts geladen. Was ein Host zusätzlich ist,
+# entscheidet er selbst über ein Profil in hosts/<n>/default.nix:
+#
+#     imports = [ ../../profiles/workstation.nix ];   # Desktop-Rechner
+#     imports = [ ../../profiles/server.nix ];        # Server (headless)
+#
+# Hier gehört nur hinein, was auch auf einem Server ohne Bildschirm
+# sinnvoll ist. Alles Grafische steht in profiles/workstation.nix.
+# ─────────────────────────────────────────────────────────────────────
 {pkgs, ...}: {
-  imports = [
-    ./system
-  ];
-
   # ── Nix ──────────────────────────────────────────────
   nix.settings.experimental-features = ["nix-command" "flakes"];
   nixpkgs.config.allowUnfree = true;
@@ -56,25 +64,9 @@
     ];
   };
 
-  # ── Desktop & Anzeige ────────────────────────────────
-  # services.desktopManager.gnome.enable = true;
-
-  services.displayManager.ly.enable = true;
-
-  # Configure keymap in X11
-  # services.xserver.xkb = {
-  #   layout = "at";
-  #   variant = "";
-  # };
-
-  programs.dconf.enable = true; # for gtk-windows to remember their size
-
-  fonts.packages = with pkgs; [
-    nerd-fonts.jetbrains-mono
-  ];
-
   # ── Tastatur ─────────────────────────────────────────
   # Caps Lock: click once = Esc, hold = Ctrl
+  # Auch am Server praktisch, wenn man direkt davorsitzt (Notfall-Konsole).
   services.keyd = {
     enable = true;
     keyboards.default = {
@@ -85,24 +77,7 @@
     };
   };
 
-  # ── Audio ────────────────────────────────────────────
-  services.pulseaudio.enable = false; # Enable sound with pipewire.
-  security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
-  };
-
-  # ── Hardware & Laufwerke ─────────────────────────────
-  services.printing.enable = true;
-
-  services.udisks2.enable = true; # Externe Drives (zB USB, externe Festplatte)
-
   # ── Programme ────────────────────────────────────────
-  programs.firefox.enable = true;
-
   programs.neovim = {
     # setze neovim als Standardeditor
     enable = true;

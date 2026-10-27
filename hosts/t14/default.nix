@@ -1,5 +1,8 @@
 {...}: {
-  imports = [./hardware-configuration.nix];
+  imports = [
+    ./hardware-configuration.nix
+    ../../profiles/workstation.nix
+  ];
 
   # Desktop dieses Laptops: "niri" (Wayland, Kitty) oder "qtile" (X11, Alacritty).
   # Ändern: hier umstellen ODER  install t14 niri|qtile  erneut ausführen.

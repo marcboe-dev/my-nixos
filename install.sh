@@ -1,10 +1,12 @@
-# Nutzung: install <host> [laptop] [niri|qtile]
-#   host:       Ordnername unter hosts/ (z.B. t14, t490, vm)
-#   laptop:     nur nötig, wenn hosts/<host> noch nicht existiert
-#               (legt einen neuen Laptop-Host mit den Daten dieser Maschine an)
-#   niri|qtile: Desktop des Laptops. Bei neuen Laptops wird sonst gefragt,
-#               bei bestehenden wird damit umgestellt. Die VM ist immer qtile.
-#   Die Reihenfolge von "laptop" und "niri|qtile" ist egal.
+# Nutzung: install <host> [laptop|server] [niri|qtile]
+#   host:         Ordnername unter hosts/ (z.B. t14, t490, vm, server)
+#   laptop|server nur nötig, wenn hosts/<host> noch nicht existiert
+#                 (legt einen neuen Host mit den Daten dieser Maschine an)
+#                 laptop = Workstation mit Desktop, server = headless
+#   niri|qtile:   Desktop des Laptops. Bei neuen Laptops wird sonst gefragt,
+#                 bei bestehenden wird damit umgestellt. Die VM ist immer qtile.
+#                 Ein Server hat keinen Desktop.
+#   Die Reihenfolge der Argumente nach <host> ist egal.
 #
 # Beispiele:
 #   install vm                  # VM, immer qtile
@@ -12,6 +14,8 @@
 #   install t490 laptop qtile   # neuer Laptop, direkt mit qtile
 #   install t14                 # bestehender Laptop, Desktop wie in Git
 #   install t14 qtile           # bestehender Laptop, auf qtile umstellen
+#   install server server       # neuer Server (Tailscale-Exit-Node, SSH)
+#   install server              # bestehender Server, Neuinstallation
 
 REPO="https://github.com/marcboe-dev/my-nixos.git"
 DIR="$HOME/nixos-dotfiles"
@@ -53,17 +57,23 @@ DESKTOP=""
 # Restliche Argumente in beliebiger Reihenfolge einsammeln
 for ARG in "${@:2}"; do
   case "$ARG" in
-    laptop) TYP="laptop" ;;
+    laptop | server)
+      if [ -n "$TYP" ] && [ "$TYP" != "$ARG" ]; then
+        echo "FEHLER: '$TYP' und '$ARG' gleichzeitig angegeben. Bitte nur eins."
+        exit 1
+      fi
+      TYP="$ARG"
+      ;;
     niri | qtile) DESKTOP="$ARG" ;;
     *)
-      echo "FEHLER: Unbekanntes Argument '$ARG' (erlaubt: laptop, niri, qtile)."
+      echo "FEHLER: Unbekanntes Argument '$ARG' (erlaubt: laptop, server, niri, qtile)."
       exit 1
       ;;
   esac
 done
 
 if [ -z "$NAME" ]; then
-  echo "Nutzung: install <host> [laptop] [niri|qtile]"
+  echo "Nutzung: install <host> [laptop|server] [niri|qtile]"
   echo "Bekannte Hosts:"
   for d in hosts/*/; do echo "  $(basename "$d")"; done
   exit 1
@@ -97,11 +107,84 @@ if [ "$NAME" = "vm" ] && [ -n "$DESKTOP" ]; then
   DESKTOP=""
 fi
 
-# ── 5. Neuen Laptop-Host anlegen bzw. Desktop umstellen ────────
+# ── 4c. Ist der Host ein Server? ───────────────────────────────
+# Neuer Host: aus dem Argument. Bestehender Host: am Profil in default.nix.
+IS_SERVER=""
+if [ "$TYP" = "server" ]; then
+  IS_SERVER=1
+elif [ -f "$HOSTDIR/default.nix" ] && grep -q 'profiles/server.nix' "$HOSTDIR/default.nix"; then
+  IS_SERVER=1
+fi
+
+if [ -n "$IS_SERVER" ] && [ -n "$DESKTOP" ]; then
+  echo "FEHLER: '$NAME' ist ein Server und hat keinen Desktop ('$DESKTOP' geht nicht)."
+  exit 1
+fi
+if [ -f "$HOSTDIR/default.nix" ] && [ -n "$TYP" ]; then
+  echo "HINWEIS: Host '$NAME' existiert schon, '$TYP' wird ignoriert (Rolle steht in $HOSTDIR/default.nix)."
+fi
+
+# ── 5a. Neuen Server-Host anlegen ──────────────────────────────
+if [ ! -f "$HOSTDIR/default.nix" ] && [ "$TYP" = "server" ]; then
+  mkdir -p "$HOSTDIR"
+
+  # Kabel-Netzwerkkarte für Wake-on-LAN suchen (echtes Gerät, kein WLAN)
+  ETH=""
+  for d in /sys/class/net/*; do
+    [ -e "$d/device" ] || continue   # virtuelle Interfaces überspringen
+    [ -d "$d/wireless" ] && continue # WLAN überspringen
+    ETH="$(basename "$d")"
+    break
+  done
+  if [ -n "$ETH" ]; then
+    WOL="  networking.interfaces.\"$ETH\".wakeOnLan.enable = true;"
+  else
+    WOL="  # networking.interfaces.\"<interface>\".wakeOnLan.enable = true;  # keine Kabel-Netzwerkkarte gefunden"
+    echo "WARNUNG: Keine Kabel-Netzwerkkarte gefunden. Wake-on-LAN bleibt aus."
+  fi
+
+  # Akku-Ladegrenze: nur wenn Hardware und Kernel das unterstützen (z.B. ThinkPads)
+  BAT=""
+  for b in /sys/class/power_supply/BAT*; do
+    if [ -e "$b/charge_control_end_threshold" ]; then BAT="$(basename "$b")"; break; fi
+  done
+  if [ -n "$BAT" ]; then
+    TLP="  services.tlp = {
+    enable = true;
+    settings = {
+      START_CHARGE_THRESH_$BAT = 75;
+      STOP_CHARGE_THRESH_$BAT = 80;
+    };
+  };"
+  else
+    TLP="  # Keine Akku-Ladegrenze: Akku fehlt oder wird von der Hardware nicht unterstützt."
+  fi
+
+  cat > "$HOSTDIR/default.nix" <<EOF
+{...}: {
+  imports = [
+    ./hardware-configuration.nix
+    ../../profiles/server.nix
+  ];
+
+  # ── Nur diese Maschine (von install.sh ausgelesen) ──────────────
+  # Wake-on-LAN: zusätzlich im BIOS einschalten. Geht nur per Kabel und am Netzteil.
+$WOL
+
+  # Akku schonen im Dauerbetrieb am Netzteil
+$TLP
+}
+EOF
+
+  echo "Neuer Server-Host '$NAME' angelegt."
+fi
+
+# ── 5b. Neuen Laptop-Host anlegen bzw. Desktop umstellen ───────
 if [ ! -f "$HOSTDIR/default.nix" ]; then
   if [ "$TYP" != "laptop" ]; then
     echo "Host '$NAME' existiert nicht unter hosts/."
     echo "Neuen Laptop anlegen mit: install $NAME laptop [niri|qtile]"
+    echo "Neuen Server anlegen mit: install $NAME server"
     exit 1
   fi
 
@@ -140,7 +223,10 @@ if [ ! -f "$HOSTDIR/default.nix" ]; then
   # Ohne Anführungszeichen um EOF, damit $NAME, $DESKTOP, $PANEL und $EDID eingesetzt werden
   cat > "$HOSTDIR/default.nix" <<EOF
 {...}: {
-  imports = [./hardware-configuration.nix];
+  imports = [
+    ./hardware-configuration.nix
+    ../../profiles/workstation.nix
+  ];
 
   # Desktop dieses Laptops: "niri" (Wayland, Kitty) oder "qtile" (X11, Alacritty).
   # Ändern: hier umstellen ODER  install $NAME niri|qtile  erneut ausführen.
@@ -186,6 +272,31 @@ git add -A "$HOSTDIR"
 
 # ── 7. System bauen ────────────────────────────────────────────
 sudo nixos-rebuild switch --flake ".#nixos-$NAME" --option experimental-features "nix-command flakes"
+
+# ── 7b. Server: bei Tailscale anmelden ─────────────────────────
+if [ -n "$IS_SERVER" ]; then
+  echo
+  if tailscale status >/dev/null 2>&1; then
+    echo "Tailscale ist bereits angemeldet."
+  else
+    echo "Tailscale-Anmeldung: Den folgenden Link auf einem beliebigen Gerät öffnen"
+    echo "und mit deinem Tailscale-Account bestätigen."
+    sudo tailscale login
+  fi
+  # Exit-Node- und SSH-Einstellung (extraSetFlags) nach der Anmeldung sicher anwenden
+  sudo systemctl restart tailscaled-set.service || true
+
+  echo
+  echo "Noch einmalig in der Tailscale-Admin-Konsole (https://login.tailscale.com/admin/machines):"
+  echo "  1. Bei 'nixos-$NAME' → Edit route settings → 'Use as exit node' freigeben"
+  echo "  2. Bei 'nixos-$NAME' → 'Disable key expiry' (sonst fliegt der Server nach Monaten raus)"
+  if ! ls keys/*.pub >/dev/null 2>&1; then
+    echo
+    echo "SSH-Schlüssel: Es liegen noch keine unter keys/*.pub. Vom Laptop aus:"
+    echo "  cp ~/.ssh/id_ed25519.pub ~/nixos-dotfiles/keys/<laptop>.pub   # committen, pushen, Server neu bauen"
+    echo "Bis dahin geht der Zugang über Tailscale SSH:  ssh marc@nixos-$NAME"
+  fi
+fi
 
 # ── 8. Hinweis zum Sichern ─────────────────────────────────────
 echo

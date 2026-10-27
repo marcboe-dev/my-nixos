@@ -1,30 +1,47 @@
 # NixOS-Konfiguration
 
 Reproduzierbares NixOS mit Flakes und Home Manager für Bare Metal
-(ThinkPads) und VMware Workstation Pro.
+(ThinkPads), VMware Workstation Pro und einen Heimserver (Tailscale-Exit-Node).
 
 ## Struktur
 
     flake.nix                 # Hosts werden automatisch aus hosts/ erzeugt
-    configuration.nix         # gemeinsame System-Config
     install.sh                # Installationsskript (über nix run)
-    hosts/
-      t14/           # eine Maschine = ein Ordner
-        default.nix           # Desktop + Laptop-Werte (EDID, Soundkarte, DPI)
+    profiles/                 # WAS für ein Rechner (Rolle)
+      base.nix                # jeder Rechner (kommt aus flake.nix)
+      workstation.nix         # Desktop, Audio, GUI-Apps (+ home/workstation.nix)
+      server.nix              # headless: SSH, Tailscale-Exit-Node, kein Standby
+    hosts/                    # eine Maschine = ein Ordner, wählt ihr Profil
+      t14/
+        default.nix           # Profil + Desktop + Laptop-Werte (EDID, Soundkarte, DPI)
         hardware-configuration.nix
-      t490/          # wird beim ersten Install automatisch angelegt
-      vm/
-    system/                   # NixOS-Ebene
+      t490/  vm/  server/     # werden beim ersten Install automatisch angelegt
+    system/                   # NixOS-Teile der Workstation
       desktop/                # my.desktop: niri oder qtile
       laptop/                 # my.laptop: Dock, Akku, Bluetooth, autorandr ...
       terminal.nix            # my.terminal: folgt dem Desktop
     home/                     # Home-Manager-Ebene
-      home.nix
+      base.nix                # jeder Rechner: cli/ + nvim/tmux-Links
+      workstation.nix         # nur Workstation: desktop/, apps/, rmpc
       desktop/                # niri.nix, qtile.nix (folgen my.desktop)
       apps/                   # GUI-Programme
-      cli/                    # Terminal-Tools
+      cli/                    # Terminal-Tools (auch auf dem Server)
+    keys/                     # *.pub = SSH-Schlüssel, die auf den Server dürfen
     config/                   # Dotfiles (nvim, qtile, niri, tmux, rofi, ...)
     scripts/
+
+### Rollen: Profile statt Bedingungen
+
+Ein Host wählt seine Rolle in `hosts/<n>/default.nix` per Import:
+
+    imports = [ ./hardware-configuration.nix ../../profiles/workstation.nix ];
+    imports = [ ./hardware-configuration.nix ../../profiles/server.nix ];
+
+Faustregel: **Imports** entscheiden, *was für ein Rechner* es ist.
+**Optionen** (`my.desktop`, `my.terminal`, `my.laptop`) entscheiden, *welche
+Variante* bzw. *welche Werte* – sie gibt es nur auf Workstations.
+Ein neues App-Modul in `home/apps/` landet so automatisch nur auf
+Workstations, nie auf dem Server.
 
 Der Hostname jeder Maschine ist `nixos-<ordnername>`
 (`hosts/t14` → `nixos-t14`).
@@ -61,6 +78,15 @@ Abweichen pro Host mit `my.terminal = "kitty";` bzw. `"alacritty"`.
    **Neuer Laptop, erste Installation** (legt `hosts/<name>/` an, fragt nach dem Desktop):
 
        nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- t490 laptop
+
+   **Neuer Server** (headless, Tailscale-Exit-Node, SSH; legt `hosts/<n>/` an):
+
+       nix --extra-experimental-features "nix-command flakes" run github:marcboe-dev/my-nixos --refresh -- server server
+
+   Das Skript erkennt Kabel-Netzwerkkarte (Wake-on-LAN) und Akku-Ladegrenze
+   selbst, baut das System und startet die Tailscale-Anmeldung (Link öffnen,
+   bestätigen). Danach in der Tailscale-Admin-Konsole beim Server
+   „Use as exit node“ freigeben und „Disable key expiry“ setzen.
 
    Desktop direkt mitgeben statt Rückfrage:
 
@@ -102,6 +128,24 @@ Desktop-Wechsel die Änderungen pushen. Die VM braucht das nicht.
     cd ~/nixos-dotfiles
     git commit -m "Host <name>"
     git push
+
+## Server
+
+- Zugang von unterwegs: `ssh marc@nixos-server` (über Tailscale) oder
+  `mosh marc@nixos-server` bei wackeliger Verbindung.
+- SSH-Schlüssel berechtigen: `~/.ssh/id_ed25519.pub` des Laptops als
+  `keys/<laptop>.pub` ins Repo legen, committen, Server neu bauen. Bis dahin
+  geht nur Tailscale SSH.
+- Vom Laptop aus neu bauen, ohne am Server zu sitzen:
+
+      nixos-rebuild switch --flake ~/nixos-dotfiles#nixos-server \
+        --target-host marc@nixos-server --sudo --ask-sudo-password
+
+- Ausschalten: `ssh marc@nixos-server sudo systemctl poweroff`.
+  Einschalten: Wake-on-LAN (im BIOS aktivieren, nur per Kabel) oder
+  BIOS-Option „Power On with AC Attach“ + smarte Steckdose.
+- Updates bewusst manuell, besonders vor Reisen: auf `nixos-unstable`
+  kann ein Update etwas kaputt machen, während du nicht vor Ort bist.
 
 ## Manuelle Schritte nach der Installation
 
