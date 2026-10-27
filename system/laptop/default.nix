@@ -72,6 +72,9 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    # Firmware-Updates für BIOS, Dock, Thunderbolt (fwupdmgr)
+    services.fwupd.enable = true;
+
     # ThinkPad Thunderbolt 3 Dock automatisch freigeben
     services.udev.extraRules = ''
       ACTION=="add", SUBSYSTEM=="thunderbolt", ATTR{unique_id}=="${dockId}", ATTR{authorized}=="0", ATTR{authorized}="1"
