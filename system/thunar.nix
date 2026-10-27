@@ -90,6 +90,13 @@
       "last-toolbar-items" = "menu:0,back:1,forward:1,open-parent:1,open-home:1,new-tab:0,new-window:0,toggle-split-view:1,undo:1,redo:1,zoom-out:0,zoom-in:0,zoom-reset:0,view-as-icons:0,view-as-detailed-list:0,view-as-compact-list:0,view-switcher:0,location-bar:1,reload:0,search:1,uca-action-1792620919862406-1:1,uca-action-1792620919862406-2:1";
     };
 
+    xdg.configFile."Thunar/accels.scm".text = ''
+      (gtk_accel_path "<Actions>/ThunarStandardView/rename" "<Primary>r")
+      (gtk_accel_path "<Actions>/ThunarWindow/reload" "F5")
+      (gtk_accel_path "<Actions>/ThunarWindow/open-parent" "<Primary><Alt>h")
+      (gtk_accel_path "<Actions>/ThunarActionManager/open" "<Primary><Alt>l")
+    '';
+
     xdg.configFile."xfce4/helpers.rc".text = ''
       TerminalEmulator=${config.my.terminal}
     '';
