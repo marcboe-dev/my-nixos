@@ -10,12 +10,16 @@ mod = "mod4"
 myTerm = os.environ.get("TERMINAL", "kitty")
 terminal = myTerm
 
+dotfiles_dir = os.path.expanduser("~/nixos-dotfiles")
+# kitty und alacritty haben unterschiedliche Flags für das Startverzeichnis
+cwd_flag = "--directory" if terminal == "kitty" else "--working-directory"
+
 keys = [
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-    Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
+    Key([mod], "space", lazy.spawn("pkill -x rofi || rofi -show drun", shell=True), desc="Launcher: Apps (rofi)"),
     # Move windows between left/right columns or move up/down in current stack.
     # Moving out of range in Columns layout will create new column.
     Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
@@ -49,16 +53,12 @@ keys = [
         lazy.window.toggle_fullscreen(),
         desc="Toggle fullscreen on the focused window",
     ),
-    Key([mod], "t", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
+    Key([mod], "v", lazy.window.toggle_floating(), desc="Toggle floating on the focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([mod, "shift"], "e", lazy.shutdown(), desc="Shutdown Qtile"),
     Key([mod], "d", lazy.spawn("pkill -x rofi || rofi -show drun", shell=True), desc='Run Launcher'),
-    KeyChord([mod], "p", [
-        Key([], "p", lazy.spawn("rofi-repos"),     desc="Projekte -> tmux"),
-        Key([], "s", lazy.spawn("rofi-sessions"),  desc="tmux-Sessions"),
-        Key([], "b", lazy.spawn("rofi-bookmarks"), desc="Bookmarks"),
-    ], name="rofi"),
-    Key([mod, "mod1"], "g", lazy.spawn("dotfiles-sync"), desc="Dotfiles: git pull"),
+    Key([mod], "p", lazy.spawn("rofi-launch"), desc="Launcher: Projekte / tmux / Bookmarks / Drive"),
+    Key([mod, "control"], "g", lazy.spawn("dotfiles-sync"), desc="Dotfiles: git pull"),
     Key(
         [mod],
         "s",
@@ -87,7 +87,30 @@ keys = [
     Key([], "XF86MonBrightnessDown",
         lazy.spawn("brightnessctl --min-value=1 set 5%-"),
         desc="Dunkler"),
+
+        # ── Terminal im Dotfiles-Ordner ──────────────────────────────────
+    Key([mod, "control"], "Return",
+        lazy.spawn([terminal, cwd_flag, dotfiles_dir]),
+        desc="Terminal: ~/nixos-dotfiles"),
+
+        # ── Sonstiges ────────────────────────────────────────────────────
+        Key([mod, "control"], "b", lazy.hide_show_bar("top"), desc="Bar ein/aus"),
+        Key([], "Print", lazy.spawn("flameshot gui"), desc="Screenshot: Region"),
 ]
+
+# Programme mit Super+Alt (links, mod1) ODER Super+AltGr (rechts, mod5)
+for alt in ("mod1", "mod3"):
+    keys += [
+        Key([mod, alt], "b", lazy.spawn("brave"), desc="Browser: Brave"),
+        Key([mod, alt], "o", lazy.spawn("obsidian"), desc="Obsidian"),
+        Key([mod, alt], "f", lazy.spawn("thunar"), desc="Dateien: Thunar"),
+        Key([mod, alt], "n", lazy.spawn([terminal, "-e", "nvim"]), desc="Editor: Neovim"),
+        Key([mod, alt], "y", lazy.spawn([terminal, "-e", "yazi"]), desc="Dateien: yazi"),
+        Key([mod, alt], "m", lazy.spawn([terminal, "-e", "rmpc"]), desc="Musik: rmpc"),
+        Key([mod, alt], "h", lazy.spawn([terminal, "-e", "btop"]), desc="System health: btop"),
+    ]
+
+
 
 # Add key bindings to switch VTs in Wayland.
 # We can't check qtile.core.name in default config as it is loaded before qtile is started

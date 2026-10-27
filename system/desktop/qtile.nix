@@ -8,6 +8,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 lib.mkIf (config.my.desktop == "qtile") {
@@ -21,6 +22,10 @@ lib.mkIf (config.my.desktop == "qtile") {
     # xwallpaper selbst wird in home/desktop/qtile.nix installiert.
     displayManager.sessionCommands = ''
       xwallpaper --zoom ~/nixos-dotfiles/walls/wall1.png
+
+      # AltGr von mod5 auf mod3 legen: qtile filtert unter X11 das mod5-Bit
+      # weg (kollidiert mit PointerMotionHintMask), mod3 funktioniert.
+      ${pkgs.xmodmap}/bin/xmodmap -e "clear mod3" -e "clear mod5" -e "add mod3 = ISO_Level3_Shift"
     '';
 
     # Tastaturlayout für X11. (niri setzt sein Layout selbst in config.kdl.)
