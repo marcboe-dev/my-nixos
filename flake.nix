@@ -58,6 +58,7 @@
 
     apps.x86_64-linux.default = {
       type = "app";
+      meta.description = "Installiert diese NixOS-Config auf einem Host";
       program = "${pkgs.writeShellApplication {
         name = "install";
         runtimeInputs = [pkgs.git pkgs.coreutils pkgs.gnused pkgs.diffutils pkgs.systemd];
