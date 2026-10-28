@@ -65,6 +65,10 @@
   };
 
   # ── Tastatur ─────────────────────────────────────────
+  # Layout der Textkonsole (TTY). Die grafischen Sitzungen setzen ihr
+  # Layout selbst: niri in config/niri/config.kdl, qtile in system/desktop/qtile.nix.
+  console.keyMap = "de-latin1-nodeadkeys";
+
   # Caps Lock: click once = Esc, hold = Ctrl
   # Auch am Server praktisch, wenn man direkt davorsitzt (Notfall-Konsole).
   services.keyd = {
