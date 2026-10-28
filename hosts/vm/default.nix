@@ -20,4 +20,7 @@
       Option "PreferredMode" "1920x1080"
     EndSection
   '';
+
+  # Zugriff aufs Tailnet (SSH zum Server). Kein Exit Node in der VM.
+  services.tailscale.enable = true;
 }
