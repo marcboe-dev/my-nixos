@@ -1,11 +1,12 @@
 {
   "manifest_version": 3,
-  "name": "YouTube h/l Seek",
-  "version": "1.0",
-  "description": "h = 5s zurück, l = 5s vor",
+  "name": "YouTube Vim Keys",
+  "version": "1.1",
+  "description": "h/l ±5s, H/L ±10s, j/k Lautstärke",
   "content_scripts": [{
     "matches": ["https://www.youtube.com/*"],
     "js": ["seek.js"],
-    "run_at": "document_start"
+    "run_at": "document_start",
+    "world": "MAIN"
   }]
 }
