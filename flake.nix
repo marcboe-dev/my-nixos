@@ -11,12 +11,17 @@
       url = "github:amaanq/nirinit";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    satty-src = {
+      url = "github:Satty-org/Satty";
+      flake = false; # nur der Quellcode, wird in flake.lock gepinnt
+    };
   };
 
   outputs = {
     nixpkgs,
     home-manager,
     nirinit,
+    satty-src,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -35,6 +40,23 @@
         system = "x86_64-linux";
         modules = [
           ./profiles/base.nix # gemeinsam für alle; die Rolle wählt der Host selbst
+          # Satty aus main: frei belegbare Keybinds ("y" = kopieren).
+          # Entfernen, sobald nixpkgs eine Satty-Version > 0.22.0 hat.
+          {
+            nixpkgs.overlays = [
+              (final: prev: {
+                satty = prev.satty.overrideAttrs (old: {
+                  version = "0.22.0-unstable-${satty-src.lastModifiedDate}";
+                  src = satty-src;
+                  cargoDeps = final.rustPlatform.importCargoLock {
+                    lockFile = "${satty-src}/Cargo.lock";
+                  };
+                  buildInputs = old.buildInputs ++ [final.fontconfig];
+                  doCheck = false; # Tests brauchen xkbcommon/Display
+                });
+              })
+            ];
+          }
           nirinit.nixosModules.nirinit
           (./hosts + "/${name}") # rechnerspezifisch
           {networking.hostName = "nixos-${name}";}

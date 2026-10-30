@@ -75,8 +75,12 @@
     enable = true;
     keyboards.default = {
       ids = ["*"];
-      settings.main = {
-        capslock = "overload(control, esc)";
+      settings = {
+        global.chord_timeout = 70;
+        main = {
+          capslock = "overload(control, esc)";
+          "j+k" = "esc";
+        };
       };
     };
   };

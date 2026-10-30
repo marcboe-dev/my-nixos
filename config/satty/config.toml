@@ -8,3 +8,7 @@ copy-command = "wl-copy --type image/png"
 # Select the tool on startup:
 #   pointer, crop, line, arrow, rectangle, text, marker, blur, brush
 initial-tool = "brush"
+
+[keybinds]
+# y = genau wie Ctrl+C (Ctrl+C bleibt zusätzlich aktiv)
+"y" = "save-to-clipboard"

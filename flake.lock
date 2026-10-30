@@ -83,7 +83,8 @@
       "inputs": {
         "home-manager": "home-manager",
         "nirinit": "nirinit",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "satty-src": "satty-src"
       }
     },
     "rust-analyzer-src": {
@@ -100,6 +101,22 @@
         "owner": "rust-lang",
         "ref": "nightly",
         "repo": "rust-analyzer",
+        "type": "github"
+      }
+    },
+    "satty-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793349198,
+        "narHash": "sha256-PczAwTJ/0NlvmS85NKgxAQ/QhZ8UDggTkQIQeruaNdU=",
+        "owner": "Satty-org",
+        "repo": "Satty",
+        "rev": "ae0214c3ae3768ed19570e88adaa74cf1f1fdc30",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Satty-org",
+        "repo": "Satty",
         "type": "github"
       }
     }

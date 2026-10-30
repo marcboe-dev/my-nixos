@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwZQrRSW5rmeAsTnLTiP+ZeRudpqN+r8NlZ/1yufuTnl5qkjMOnJUjml1szLLrsiPaDEVFtVD3LIpdHbYW3nnzvh7AvTVjjlWodqG3Q+xExsTk4Y8WZpcqQIMEr/g6KUPSRgvEXG9VACXTS2WKUfoXNcaWehZSiC9PMjDjijXQJb07tFja1LaIV3h2MIMNWgCIwhGEXH43e/bZu3pdB/4jy/DZq04xzl3Bg8gqVnBcQLyjmE3A98cMLqqcTZzFGqArPCc7L38AfUMXyOlHRIh/4g5D9/ouy/RlWmdkF2cK0lq5++PcyWBgqaQ9qV86KknZUZzHTVdF4p5ME7dL/S5sQIDAQAB",
+  "name": "Tab-Navigation Alt+h/l",
+  "version": "1.3",
+  "description": "Alt+h = Tab links, Alt+l = Tab rechts",
+  "background": { "service_worker": "background.js" },
+  "commands": {
+    "tab-left":  { "suggested_key": { "default": "Alt+H" }, "description": "Tab nach links" },
+    "tab-right": { "suggested_key": { "default": "Alt+L" }, "description": "Tab nach rechts" }
+  },
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["keys.js"],
+    "run_at": "document_start",
+    "all_frames": true
+  }]
+}
