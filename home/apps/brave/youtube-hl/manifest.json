@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube h/l Seek",
+  "version": "1.0",
+  "description": "h = 5s zurück, l = 5s vor",
+  "content_scripts": [{
+    "matches": ["https://www.youtube.com/*"],
+    "js": ["seek.js"],
+    "run_at": "document_start"
+  }]
+}

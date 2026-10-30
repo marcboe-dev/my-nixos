@@ -20,6 +20,7 @@
       "--enable-accelerated-video-decode"
       "--force-dark-mode"
       "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
+      "--load-extension=${./youtube-hl}"
     ];
   };
 

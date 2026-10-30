@@ -1,6 +1,6 @@
 {...}: {
   imports = [
-    ./brave.nix
+    ./brave
     ./rofi-tmux.nix
     ./obsidian.nix
     ./sioyek.nix

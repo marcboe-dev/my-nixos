@@ -1,6 +1,6 @@
 # Bookmarks: [personal] -> Firefox, [work] -> Brave
-pers_file="${PERS_FILE:-$HOME/.config/bookmarks/personal.txt}"
-work_file="${WORK_FILE:-$HOME/.config/bookmarks/work.txt}"
+pers_file="${PERS_FILE:-$HOME/config/bookmarks/personal.txt}"
+work_file="${WORK_FILE:-$HOME/config/bookmarks/work.txt}"
 personal_browser="${PERSONAL_BROWSER:-firefox}"
 work_browser="${WORK_BROWSER:-brave}"
 

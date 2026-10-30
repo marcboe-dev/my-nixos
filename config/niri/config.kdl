@@ -164,7 +164,7 @@ binds {
     // ------------------------------------------------------------------------
     Mod+Space       hotkey-overlay-title="Launcher: Apps (rofi)" { spawn-sh "pkill -x rofi || rofi -show drun"; }
     Mod+D           { spawn-sh "pkill -x rofi || rofi -show drun"; }   // Alias, alte Gewohnheit
-    Mod+P           hotkey-overlay-title="Launcher: Projekte / tmux / Bookmarks" { spawn "rofi-launch"; }
+        Mod+P           hotkey-overlay-title="Launcher: Projekte / tmux / Bookmarks" { spawn-sh "pkill -x rofi || pkill -x 'rofi-(launch|sessions|repos|bookmarks)' || rofi-launch"; }
     Mod+Shift+ssharp { show-hotkey-overlay; }                          // = Mod+?  (AT-Layout)
 
 
