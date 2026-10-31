@@ -143,6 +143,7 @@ in {
     Unit = {
       Description = "Google Drive bisync";
       ConditionPathExists = "%h/.config/rclone/rclone.conf";
+      X-SwitchMethod = "keep-old";
     };
     Service = {
       Type = "oneshot";
