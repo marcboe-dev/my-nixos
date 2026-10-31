@@ -21,7 +21,7 @@
       "--force-dark-mode"
       "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
       # Mehrere eigene Extensions: nur EIN --load-extension-Flag, Pfade per Komma trennen
-      "--load-extension=${./youtube-hl},${./readline-keys}"
+      "--load-extension=${./youtube-hl},${./tab-nav},${./readline-keys}"
     ];
   };
 

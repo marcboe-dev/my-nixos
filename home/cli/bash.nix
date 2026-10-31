@@ -18,21 +18,33 @@
       PS0="\e]133;C\a"
             PS1="$PS1_FULL"
 
-      # pt: kurzen Prompt (">") in tmux an/aus. Zustand liegt in einer Datei,
-      # damit neue Panes/Splits und andere offene Panes ihn übernehmen.
+            # pt: kurzen Prompt (">") an/aus.
+      # In tmux: Zustand in einer Datei, damit neue Panes/Splits ihn übernehmen.
+      # Außerhalb von tmux (Kitty, nvim :terminal): nur für diese Shell.
       _pt_flag="''${XDG_STATE_HOME:-$HOME/.local/state}/bash-prompt-short"
+      _pt_local=""
       _pt_apply() {
-        if [ -n "$TMUX" ] && [ -e "$_pt_flag" ]; then
+        local short=""
+        if [ -n "$TMUX" ]; then
+          [ -e "$_pt_flag" ] && short=1
+        else
+          short="$_pt_local"
+        fi
+        if [ -n "$short" ]; then
           PS1="$PS1_SHORT"
         else
           PS1="$PS1_FULL"
         fi
       }
       pt() {
-        if [ -e "$_pt_flag" ]; then
-          rm -f "$_pt_flag"
+        if [ -n "$TMUX" ]; then
+          if [ -e "$_pt_flag" ]; then
+            rm -f "$_pt_flag"
+          else
+            mkdir -p "''${_pt_flag%/*}" && : > "$_pt_flag"
+          fi
         else
-          mkdir -p "''${_pt_flag%/*}" && : > "$_pt_flag"
+          if [ -n "$_pt_local" ]; then _pt_local=""; else _pt_local=1; fi
         fi
         _pt_apply
       }
