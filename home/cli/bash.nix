@@ -16,8 +16,27 @@
       PS1_FULL="\[\e]133;A\a\]\[\e[38;5;75m\]\u@\h \[\e[38;5;113m\]\w \[\e[38;5;189m\]\$ \[\e[0m\]"
       PS1_SHORT="\[\e]133;A\a\]\[\e[38;5;189m\]> \[\e[0m\]"
       PS0="\e]133;C\a"
-      PS1="$PS1_FULL"
-      pt() { if [ "$PS1" = "$PS1_FULL" ]; then PS1="$PS1_SHORT"; else PS1="$PS1_FULL"; fi; }
+            PS1="$PS1_FULL"
+
+      # pt: kurzen Prompt (">") in tmux an/aus. Zustand liegt in einer Datei,
+      # damit neue Panes/Splits und andere offene Panes ihn übernehmen.
+      _pt_flag="''${XDG_STATE_HOME:-$HOME/.local/state}/bash-prompt-short"
+      _pt_apply() {
+        if [ -n "$TMUX" ] && [ -e "$_pt_flag" ]; then
+          PS1="$PS1_SHORT"
+        else
+          PS1="$PS1_FULL"
+        fi
+      }
+      pt() {
+        if [ -e "$_pt_flag" ]; then
+          rm -f "$_pt_flag"
+        else
+          mkdir -p "''${_pt_flag%/*}" && : > "$_pt_flag"
+        fi
+        _pt_apply
+      }
+      PROMPT_COMMAND="_pt_apply''${PROMPT_COMMAND:+;$PROMPT_COMMAND}"
 
       export EDITOR=nvim
       export VISUAL=nvim

@@ -32,6 +32,7 @@ in {
     k add volume 5
     0 seek 0 absolute
     ? script-binding stats/display-page-4-toggle
+    = set speed 1.0
 
   '';
 
@@ -42,6 +43,8 @@ in {
     osd-font-size=40
     osd-align-x=left
     osd-align-y=top
+    save-position-on-quit=yes
+
   '';
 
   xdg.configFile."celluloid/script-opts/stats.conf".text = ''
@@ -55,6 +58,7 @@ in {
     mpv-input-config-file = "file://${config.xdg.configHome}/celluloid/input.conf";
     mpv-config-enable = true;
     mpv-config-file = "file://${config.xdg.configHome}/celluloid/mpv.conf";
+    last-folder-enable = true;
   };
 
   # Celluloid als Standard für Videos (gilt für xdg-open, Thunar, Browser-Downloads …)

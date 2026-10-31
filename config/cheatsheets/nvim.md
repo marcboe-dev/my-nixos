@@ -1,5 +1,16 @@
 <space>             leader
 Ctrl+w              prefix
+
+## Jumplist
+ctrl+i/o            wechselt zwischen letztem Fenster hin und her
+
+## Marks
+m+<CAP LETTER>      setzt marker (zB mH)
+'H                  springt von überall zurück ins File
+:delmarks A-Z       löscht alle marks
+:delmarks H         löscht eine markl
+
+
 ## Fenster wechseln
 prefix h/j/k/l      wechselt Neovim window
 

@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Readline-Tastenkürzel",
+  "version": "1.0",
+  "description": "Ctrl+U, Alt+B, Alt+F wie in bash",
+  "content_scripts": [{
+    "matches": ["<all_urls>"],
+    "js": ["readline.js"],
+    "run_at": "document_start",
+    "all_frames": true,
+    "match_about_blank": true
+  }]
+}

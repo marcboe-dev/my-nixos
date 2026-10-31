@@ -100,6 +100,11 @@ layout {
 // Avoid writing screenshots to disk since they get piped into satty.
 screenshot-path null
 
+cursor {
+    xcursor-theme "Adwaita"
+    xcursor-size 24
+}
+
 hotkey-overlay {
     skip-at-startup
 }

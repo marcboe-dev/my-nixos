@@ -55,6 +55,15 @@ in
       (mkScript "dfr-launch-or-focus-tui" [jq kitty])
     ];
 
+    # Einheitliches Cursor-Theme (inkl. Crosshair für slurp), skaliert sauber
+    home.pointerCursor = {
+      enable = true;
+      package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
+      size = 24;
+      gtk.enable = true;
+    };
+
     # Damit ~/Pictures sicher existiert (sonst kann satty nicht speichern)
     xdg.userDirs = {
       enable = true;
