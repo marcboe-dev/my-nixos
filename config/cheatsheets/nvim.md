@@ -1,6 +1,10 @@
 <space>             leader
 Ctrl+w              prefix
 
+## Completion
+ctl+space           toggle completion
+ctrl+n/p            cycle trhough suggestions
+
 ## Jumplist
 ctrl+i/o            wechselt zwischen letztem Fenster hin und her
 

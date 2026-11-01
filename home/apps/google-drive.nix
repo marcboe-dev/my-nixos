@@ -13,7 +13,6 @@
   # ============================================================
   syncFolders = [
     "Documents/recipes"
-    "Documents/obsidian"
     "Documents/c"
   ];
 
