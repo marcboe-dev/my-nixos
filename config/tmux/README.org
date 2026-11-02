@@ -49,14 +49,6 @@ set -g set-clipboard on
 
 Mouse support lets you click between panes and drag borders to resize. Clipboard integration means when you copy text in tmux, it goes to your system clipboard.
 
-** Prefix Key
-
-#+begin_src conf
-unbind C-b
-set -g prefix C-a
-bind-key C-a send-prefix
-#+end_src
-
 This changes the prefix from =Ctrl-b= to =Ctrl-a= because it's way easier to reach. The third line lets you send the actual =Ctrl-a= to the terminal if needed.
 
 ** Pane Navigation

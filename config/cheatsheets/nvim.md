@@ -1,9 +1,13 @@
 <space>             leader
 Ctrl+w              prefix
 
+## Telescope
+leader+fi           find in nvim directory
+
 ## Completion
 ctl+space           toggle completion
 ctrl+n/p            cycle trhough suggestions
+ctrl+n              evoke auto-suggestion from variables from file
 
 ## Jumplist
 ctrl+i/o            wechselt zwischen letztem Fenster hin und her
@@ -33,3 +37,6 @@ gl                  diagnostics floating window (navigate with ]d oder [d)
 
 ## Config
 prefix rl           reload nvim config
+
+## Misc Hacks
+ctrl+a/x            increase/decrease first appearing number by 1

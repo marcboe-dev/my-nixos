@@ -39,8 +39,8 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 -- lint / format php files for LC
 vim.keymap.set("n", "<leader>cc", "<cmd>!php-cs-fixer fix % --using-cache=no<cr>")
 
--- Replace all instances of whatever is under cursor (on line)
-vim.keymap.set("n", "<leader>s", [[:s/\<<C-r><C-w>\>//gI<Left><Left><Left>]])
+-- Ersetze das Wort unter dem Cursor in der ganzen Datei (mit Nachfrage)
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>//gcI<Left><Left><Left><Left>]])
 
 -- make file executable
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
@@ -56,7 +56,7 @@ vim.keymap.set("n", "<leader>rl", function()
     end
     require("config.options")
     require("config.keybinds")
-    vim.notify("nvim config neu geladen")
+    vim.notify("nvim config reloaded")
 end)
 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
