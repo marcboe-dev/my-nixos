@@ -24,5 +24,7 @@ configuration{
     kb-remove-char-back: "BackSpace";
     kb-move-char-forward: "Control+f";
     kb-mode-complete: "Control+o";
+
+    kb-cancel: "Escape,Control+g,Control+bracketleft,Super+d,Super+p,Super+space";
 }
 @theme "tokyonight.rasi"

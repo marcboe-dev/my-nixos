@@ -98,17 +98,26 @@ keys = [
         Key([], "Print", lazy.spawn("flameshot gui"), desc="Screenshot: Region"),
 ]
 
-# Programme mit Super+Alt (links, mod1) ODER Super+AltGr (rechts, mod5)
+# Programme mit Super+Alt (links, mod1) ODER Super+AltGr (rechts, mod3)
 for alt in ("mod1", "mod3"):
     keys += [
         Key([mod, alt], "b", lazy.spawn("brave"), desc="Browser: Brave"),
         Key([mod, alt], "o", lazy.spawn("obsidian"), desc="Obsidian"),
         Key([mod, alt], "f", lazy.spawn("thunar"), desc="Dateien: Thunar"),
+        Key([mod, alt, "shift"], "f", lazy.spawn("thunar --name=dfr.floating.thunar"), desc="Dateien: Thunar (schwebend)"),  
         Key([mod, alt], "n", lazy.spawn([terminal, "-e", "nvim"]), desc="Editor: Neovim"),
         Key([mod, alt], "y", lazy.spawn([terminal, "-e", "yazi"]), desc="Dateien: yazi"),
         Key([mod, alt], "m", lazy.spawn([terminal, "-e", "rmpc"]), desc="Musik: rmpc"),
         Key([mod, alt], "h", lazy.spawn([terminal, "-e", "btop"]), desc="System health: btop"),
     ]
+
+# AltGr von mod5 auf mod3 legen (qtile ignoriert mod5 unter X11).            
+# Läuft bei jedem qtile-Start/Reload, also auch nach Mod+Ctrl+R.             
+@hook.subscribe.startup                                                     
+def altgr_to_mod3():                                                        
+    subprocess.run(["xmodmap", "-e", "clear mod3", "-e", "clear mod5",      
+                    "-e", "add mod3 = ISO_Level3_Shift"])                   
+
 
 
 
@@ -352,6 +361,7 @@ floating_layout = layout.Floating(
         Match(wm_class="ssh-askpass"),  # ssh-askpass
         Match(title="branchdialog"),  # gitk
         Match(title="pinentry"),  # GPG key password entry
+        Match(wm_class="dfr.floating.thunar"),  # NEU: Thunar schwebend (Mod+Alt+Shift+F)
     ]
 )
 auto_fullscreen = True

@@ -15,6 +15,7 @@ in
       xwallpaper # Wallpaper, wird in system/desktop/qtile.nix aufgerufen
       xclip # Zwischenablage unter X11
       maim # Screenshots
+      xmodmap # AltGr → mod3, wird in config/qtile/config.py beim Start aufgerufen
     ];
 
     # Screenshot-Tool, in config/qtile/config.py an eine Taste gebunden.

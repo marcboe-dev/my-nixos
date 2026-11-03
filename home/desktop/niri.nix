@@ -51,8 +51,6 @@ in
       swaybg # Wallpaper unter Wayland
       wl-clipboard # wl-copy für tmux (Ctrl+Shift+Enter)
       (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils procps])
-      (mkScript "dfr-launch-or-focus" [jq])
-      (mkScript "dfr-launch-or-focus-tui" [jq kitty])
     ];
 
     # Einheitliches Cursor-Theme (inkl. Crosshair für slurp), skaliert sauber

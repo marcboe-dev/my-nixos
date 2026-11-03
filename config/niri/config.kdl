@@ -181,17 +181,17 @@ binds {
     Mod+Shift+Return hotkey-overlay-title="Terminal (schwebend)" { spawn "kitty" "--class" "dfr.floating.kitty"; }
     Mod+Ctrl+Return  hotkey-overlay-title="Terminal: ~/nixos-dotfiles" { spawn-sh "kitty --directory ~/nixos-dotfiles"; }
 
-    // GUI-Apps
-    Mod+Alt+B        hotkey-overlay-title="Browser: Brave" { spawn "dfr-launch-or-focus" "^brave-browser$" "brave"; }
-    Mod+Alt+O        hotkey-overlay-title="Obsidian" { spawn "dfr-launch-or-focus" "obsidian$" "obsidian"; }
+    // GUI-Apps (jeder Tastendruck = neues Fenster)
+    Mod+Alt+B        hotkey-overlay-title="Browser: Brave" { spawn "brave"; }
+    Mod+Alt+O        hotkey-overlay-title="Obsidian" { spawn "obsidian"; }
     Mod+Alt+F        hotkey-overlay-title="Dateien: Thunar" { spawn "thunar"; }
     Mod+Alt+Shift+F  hotkey-overlay-title="Dateien: Thunar (schwebend)" { spawn "thunar" "--name=dfr.floating.thunar"; }
 
-    // TUIs (launch-or-focus mit eigener app-id dfr.kitty.<app>)
-    Mod+Alt+N        hotkey-overlay-title="Editor: Neovim" { spawn "dfr-launch-or-focus-tui" "nvim"; }
-    Mod+Alt+Y        hotkey-overlay-title="Dateien: yazi" { spawn "dfr-launch-or-focus-tui" "yazi"; }
-    Mod+Alt+M        hotkey-overlay-title="Musik: rmpc" { spawn "dfr-launch-or-focus-tui" "rmpc"; }
-    Mod+Alt+H        hotkey-overlay-title="System health: btop" { spawn "dfr-launch-or-focus-tui" "btop"; }
+    // TUIs (jeder Tastendruck = neues Kitty-Fenster mit app-id dfr.kitty.<app>)
+    Mod+Alt+N        hotkey-overlay-title="Editor: Neovim" { spawn "kitty" "--class" "dfr.kitty.nvim" "-e" "nvim"; }
+    Mod+Alt+Y        hotkey-overlay-title="Dateien: yazi" { spawn "kitty" "--class" "dfr.kitty.yazi" "-e" "yazi"; }
+    Mod+Alt+M        hotkey-overlay-title="Musik: rmpc" { spawn "kitty" "--class" "dfr.kitty.rmpc" "-e" "rmpc"; }
+    Mod+Alt+H        hotkey-overlay-title="System health: btop" { spawn "kitty" "--class" "dfr.kitty.btop" "-e" "btop"; }
 
 
     // ------------------------------------------------------------------------
