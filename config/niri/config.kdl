@@ -182,10 +182,11 @@ binds {
     Mod+Ctrl+Return  hotkey-overlay-title="Terminal: ~/nixos-dotfiles" { spawn-sh "kitty --directory ~/nixos-dotfiles"; }
 
     // GUI-Apps (jeder Tastendruck = neues Fenster)
-    Mod+Alt+B        hotkey-overlay-title="Browser: Brave" { spawn "brave"; }
+        Mod+Alt+B        hotkey-overlay-title="Browser: Brave" { spawn "brave"; }
+    Mod+Alt+Shift+B  hotkey-overlay-title="Kurz googlen (Brave App-Fenster)" { spawn "dfr-float-spawn" "^brave-.*__" "50%" "70%" "brave" "--app=https://www.google.com"; }
     Mod+Alt+O        hotkey-overlay-title="Obsidian" { spawn "obsidian"; }
     Mod+Alt+F        hotkey-overlay-title="Dateien: Thunar" { spawn "thunar"; }
-    Mod+Alt+Shift+F  hotkey-overlay-title="Dateien: Thunar (schwebend)" { spawn "thunar" "--name=dfr.floating.thunar"; }
+    Mod+Alt+Shift+F  hotkey-overlay-title="Dateien: Thunar (schwebend)" { spawn "dfr-float-spawn" "^thunar$" "50%" "60%" "thunar"; }
 
     // TUIs (jeder Tastendruck = neues Kitty-Fenster mit app-id dfr.kitty.<app>)
     Mod+Alt+N        hotkey-overlay-title="Editor: Neovim" { spawn "kitty" "--class" "dfr.kitty.nvim" "-e" "nvim"; }
