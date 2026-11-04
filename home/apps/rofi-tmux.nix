@@ -26,6 +26,6 @@ in {
     repos
     sessions
     bookmarks
-    (mkScript "rofi-launch" [pkgs.rofi repos sessions bookmarks])
+    (mkScript "rofi-launch" [pkgs.rofi pkgs.coreutils pkgs.util-linux repos sessions bookmarks])
   ];
 }
