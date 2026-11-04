@@ -29,3 +29,8 @@ exec 3<&-
 niri msg action move-window-to-floating --id "$ID"
 niri msg action set-window-width --id "$ID" "$WIDTH"
 niri msg action set-window-height --id "$ID" "$HEIGHT"
+
+# Kurz warten, bis die App die neue Größe übernommen hat,
+# sonst zentriert niri noch mit der alten Größe.
+sleep 0.1
+niri msg action center-window --id "$ID"
