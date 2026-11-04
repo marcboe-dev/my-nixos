@@ -52,6 +52,7 @@ in
       wl-clipboard # wl-copy für tmux (Ctrl+Shift+Enter)
       (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils procps])
       (mkScript "dfr-float-spawn" [jq coreutils])
+      (mkScript "dfr-launch-or-focus" [jq])
     ];
 
     # Einheitliches Cursor-Theme (inkl. Crosshair für slurp), skaliert sauber
