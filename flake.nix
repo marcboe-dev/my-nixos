@@ -7,10 +7,6 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs"; # versions nixpkgs & home-manger same
     };
-    nirinit = {
-      url = "github:amaanq/nirinit";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     satty-src = {
       url = "github:Satty-org/Satty";
       flake = false; # nur der Quellcode, wird in flake.lock gepinnt
@@ -20,7 +16,6 @@
   outputs = {
     nixpkgs,
     home-manager,
-    nirinit,
     satty-src,
     ...
   }: let
@@ -57,7 +52,6 @@
               })
             ];
           }
-          nirinit.nixosModules.nirinit
           (./hosts + "/${name}") # rechnerspezifisch
           {networking.hostName = "nixos-${name}";}
           home-manager.nixosModules.home-manager

@@ -202,7 +202,6 @@ binds {
     Mod+Ctrl+K       hotkey-overlay-title="Kochmodus: Bildschirm bleibt an (ein/aus)" { spawn "noctalia" "msg" "caffeine-toggle"; }
     Mod+Ctrl+B       hotkey-overlay-title="Noctalia Bar ein/aus" { spawn "noctalia" "msg" "bar-toggle"; }
     Mod+Ctrl+G       hotkey-overlay-title="Dotfiles: git pull" { spawn "dotfiles-sync"; }
-    Mod+Ctrl+S       hotkey-overlay-title="Layout speichern (nirinit)" { spawn "nirinit-save"; }
     Mod+Ctrl+T       hotkey-overlay-title="TV: Bildwiederholrate wechseln" { spawn "tv-hz"; }
     Mod+Ctrl+P       hotkey-overlay-title="Monitore ausschalten" { power-off-monitors; }
 
