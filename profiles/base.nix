@@ -80,11 +80,18 @@
         main = {
           capslock = "overload(control, esc)";
           "j+k" = "esc";
+          space = "lettermod(nav, space, 150, 200)";
         };
         control = {
           h = "backspace";
           m = "enter";
           l = "delete";
+        };
+        nav = {
+          h = "left";
+          j = "down";
+          k = "up";
+          l = "right";
         };
       };
     };
