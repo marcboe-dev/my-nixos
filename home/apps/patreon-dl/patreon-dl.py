@@ -422,26 +422,67 @@ def write_index(outdir, title, entries):
 
 # ─── Reihenfolge & Fortsetzen ──────────────────────────────────────
 
-def oldest_first(session, ids):
-    """Post-IDs chronologisch sortieren (älteste zuerst).
-    Prüft nur erstes und letztes Datum, statt jeden Post abzurufen."""
-    if len(ids) < 2:
-        return ids
-    def date(pid):
-        return fetch_post(session, pid)["data"]["attributes"].get("published_at") or ""
-    return list(reversed(ids)) if date(ids[0]) > date(ids[-1]) else ids
+def post_meta(session, ids, outdir: Path):
+    """Titel + Datum aller Posts holen (für die Sortierung).
+    Wird in .posts.json gecacht, damit es nur beim ersten Mal dauert."""
+    cache_file = outdir / ".posts.json"
+    try:
+        cache = json.loads(cache_file.read_text())
+    except Exception:
+        cache = {}
+    missing = [pid for pid in ids if pid not in cache]
+    for i, pid in enumerate(missing, 1):
+        print(f"\rLade Post-Infos {i}/{len(missing)} …", end="", flush=True)
+        r = get(session, f"{API}/posts/{pid}",
+                params={"fields[post]": "title,published_at", "json-api-version": "1.0"})
+        at = (r.json()["data"]["attributes"] if r.status_code == 200
+              else fetch_post(session, pid)["data"]["attributes"])
+        cache[pid] = {"title": at.get("title") or f"Post {pid}",
+                      "date": at.get("published_at") or ""}
+        cache_file.write_text(json.dumps(cache, indent=1, ensure_ascii=False))
+        time.sleep(0.3)
+    if missing:
+        print()
+    return cache
 
 
-def ask_order(args):
+ORDERS = {
+    "oldest":     "älteste zuerst (nach Datum)",
+    "newest":     "neueste zuerst (nach Datum)",
+    "collection": "Reihenfolge wie in der Collection auf Patreon",
+    "title":      "nach Titel (Week 1, Week 2, … Zahlen richtig sortiert)",
+}
+
+
+def natural(text):
+    """'Week 2' vor 'Week 10': Zahlen im Titel als Zahlen vergleichen."""
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", text)]
+
+
+def ordered(ids, meta, order):
+    if order == "collection":
+        return list(ids)
+    if order == "title":
+        return sorted(ids, key=lambda p: natural(meta[p]["title"]))
+    by_date = sorted(ids, key=lambda p: meta[p]["date"])
+    return by_date if order == "oldest" else list(reversed(by_date))
+
+
+def ask_order(args, ids, meta):
     if args.order:
         return args.order
     if not sys.stdin.isatty():
         return "oldest"
-    print("\nWomit starten?\n  [1] älteste Posts zuerst (Kursreihenfolge)\n  [2] neueste Posts zuerst")
+    keys = list(ORDERS)
+    print("\nWomit starten?")
+    for i, k in enumerate(keys, 1):
+        print(f"  [{i}] {ORDERS[k]}")
+        for pid in ordered(ids, meta, k)[:3]:          # Vorschau: die ersten 3
+            print(f"        {meta[pid]['date'][:10]}  {meta[pid]['title'][:70]}")
     while True:
         a = input("Auswahl [1]: ").strip() or "1"
-        if a in ("1", "2"):
-            return "oldest" if a == "1" else "newest"
+        if a.isdigit() and 1 <= int(a) <= len(keys):
+            return keys[int(a) - 1]
 
 
 def scan_existing(outdir: Path):
@@ -494,8 +535,8 @@ def main():
                     help="nur die nächsten N offenen Posts laden")
     ap.add_argument("--list", action="store_true",
                     help="nur auflisten, welche Posts geladen würden (lädt nichts)")
-    ap.add_argument("--order", choices=["oldest", "newest"],
-                    help="oldest = älteste zuerst, newest = neueste zuerst (sonst Abfrage)")
+    ap.add_argument("--order", choices=list(ORDERS),
+                    help="oldest / newest (nach Datum), collection oder title (sonst Abfrage)")
     ap.add_argument("--redo", action="store_true",
                     help="auch schon fertige Posts nochmal prüfen/laden")
     ap.add_argument("--delay", type=float, default=1.5, help="Pause zwischen Posts (s)")
@@ -524,46 +565,46 @@ def main():
     course_title = course_title or "Patreon-Download"
     post_ids = list(dict.fromkeys(post_ids))   # Duplikate raus, Reihenfolge bleibt
 
-    # Nummern sind immer chronologisch (001 = ältester Post) und bleiben dadurch
-    # stabil, egal in welcher Reihenfolge geladen wird
-    chrono = oldest_first(session, post_ids)
-    number = {pid: i for i, pid in enumerate(chrono, 1)}
-    total = len(chrono)
+    outdir = Path(args.out).expanduser() / safe(course_title)
+    outdir.mkdir(parents=True, exist_ok=True)
+    meta = post_meta(session, post_ids, outdir)
+    total = len(post_ids)
 
     if args.list:
         log(f"Kurs: {course_title} – {total} Posts (älteste zuerst)")
-        for pid in chrono:
-            t = fetch_post(session, pid)["data"]["attributes"].get("title")
-            log(f"  {number[pid]:03d}  {t}  (id {pid})")
-            time.sleep(args.delay)
+        for i, pid in enumerate(ordered(post_ids, meta, "oldest"), 1):
+            log(f"  {i:03d}  {meta[pid]['date'][:10]}  {meta[pid]['title']}  (id {pid})")
         return
 
-    order = ask_order(args)
-    queue = chrono if order == "oldest" else list(reversed(chrono))
+    order = ask_order(args, post_ids, meta)
+    queue = ordered(post_ids, meta, order)
+    # Ordnernummern folgen der gewählten Sortierung (001 = erster Post).
+    # "neueste zuerst" lädt nur andersherum, nummeriert aber wie "älteste zuerst".
+    base = ordered(post_ids, meta, "oldest" if order == "newest" else order)
+    number = {pid: i for i, pid in enumerate(base, 1)}
 
-    outdir = Path(args.out).expanduser() / safe(course_title)
-    outdir.mkdir(parents=True, exist_ok=True)
     fail_file = outdir / "failures.txt"
     old_failures = fail_file.read_text() if fail_file.exists() else ""
 
     # Schon fertige Posts überspringen (und ggf. auf die feste Nummer umbenennen)
     existing = scan_existing(outdir)
     entries, todo = {}, []
+    for pid, f in list(existing.items()):        # erst alle auf die neue Nummer
+        if pid in number:
+            target = outdir / f"{number[pid]:03d} - {safe(post_title(f, pid))}"
+            if f != target and not target.exists():
+                f.rename(target)
+                existing[pid] = target
     for pid in queue:
         f = existing.get(pid)
         if f and not args.redo and is_done(f, old_failures):
-            title = post_title(f, pid)
-            target = outdir / f"{number[pid]:03d} - {safe(title)}"
-            if f != target and not target.exists():
-                f.rename(target)
-                f = target
             (f / ".fertig").touch()
-            entries[number[pid]] = (f, title, [])
+            entries[number[pid]] = (f, post_title(f, pid), [])
         else:
             todo.append(pid)
 
     log(f"Kurs: {course_title} – {total} Posts, {len(entries)} schon fertig, "
-        f"{len(todo)} offen ({'älteste' if order == 'oldest' else 'neueste'} zuerst)")
+        f"{len(todo)} offen – {ORDERS[order]}")
 
     limit = args.limit or (3 if args.test else None)
     if limit:
