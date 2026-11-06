@@ -75,6 +75,8 @@ Fehlern einfach denselben Befehl nochmal starten.
 | `-o DIR` | anderer Zielordner (Standard `~/Patreon`) |
 | `--delay S` | Pause zwischen Posts in Sekunden (Standard 1.5) |
 | `--cookies FILE` | `cookies.txt` statt Brave-Cookies |
+| `--order oldest\|newest` | Reihenfolge ohne Abfrage festlegen |
+| `--redo` | auch fertige Posts nochmal prüfen |
 
 ## Wenn der Login nicht klappt
 

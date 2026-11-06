@@ -9,8 +9,12 @@ Aufruf:
   patreon-dl https://www.patreon.com/collection/123456
   patreon-dl https://www.patreon.com/posts/titel-987654
   patreon-dl urls.txt                       # eine Post-/Collection-URL pro Zeile
-  patreon-dl --test <url>                   # Testlauf: nur die ersten 3 Posts
+  patreon-dl --test <url>                   # Testlauf: nur die nächsten 3 offenen Posts
   patreon-dl --list <url>                   # nur auflisten, nichts laden
+  patreon-dl --order oldest <url>           # ohne Abfrage: älteste zuerst (newest = neueste)
+
+Fortsetzen: einfach denselben Befehl nochmal starten. Fertige Posts werden
+übersprungen, es geht beim nächsten offenen Post weiter.
 
 Login (eins davon):
   --browser brave        Cookies direkt aus Brave lesen (Standard; Brave vorher schließen)
@@ -264,11 +268,13 @@ def ytdlp(url, folder: Path, cookiefile, referer=None):
 
 # ─── Ein Post ──────────────────────────────────────────────────────
 
-def process_post(session, post_id, outdir: Path, idx, args, cookiefile):
+def process_post(session, post_id, outdir: Path, idx, args, cookiefile, existing=None):
     doc = fetch_post(session, post_id)
     a = doc["data"]["attributes"]
     title = a.get("title") or f"Post {post_id}"
     folder = outdir / f"{idx:03d} - {safe(title)}"
+    if existing and existing != folder and existing.exists() and not folder.exists():
+        existing.rename(folder)   # alter Ordner (andere Nummer) wird weiterverwendet
     folder.mkdir(parents=True, exist_ok=True)
     (folder / "post.json").write_text(json.dumps(doc, indent=2, ensure_ascii=False))
     log(f"\n[{idx:03d}] {title}")
@@ -414,6 +420,59 @@ def write_index(outdir, title, entries):
         page(title, f"<h1>{html.escape(title)}</h1><ol>{items}</ol>"), encoding="utf-8")
 
 
+# ─── Reihenfolge & Fortsetzen ──────────────────────────────────────
+
+def oldest_first(session, ids):
+    """Post-IDs chronologisch sortieren (älteste zuerst).
+    Prüft nur erstes und letztes Datum, statt jeden Post abzurufen."""
+    if len(ids) < 2:
+        return ids
+    def date(pid):
+        return fetch_post(session, pid)["data"]["attributes"].get("published_at") or ""
+    return list(reversed(ids)) if date(ids[0]) > date(ids[-1]) else ids
+
+
+def ask_order(args):
+    if args.order:
+        return args.order
+    if not sys.stdin.isatty():
+        return "oldest"
+    print("\nWomit starten?\n  [1] älteste Posts zuerst (Kursreihenfolge)\n  [2] neueste Posts zuerst")
+    while True:
+        a = input("Auswahl [1]: ").strip() or "1"
+        if a in ("1", "2"):
+            return "oldest" if a == "1" else "newest"
+
+
+def scan_existing(outdir: Path):
+    """Schon vorhandene Post-Ordner finden: {post_id: ordner}."""
+    found = {}
+    for d in outdir.iterdir():
+        try:
+            found[str(json.loads((d / "post.json").read_text())["data"]["id"])] = d
+        except Exception:
+            continue
+    return found
+
+
+def is_done(folder: Path, old_failures: str):
+    if (folder / ".fertig").exists():
+        return True
+    if (folder / ".fehler").exists():
+        return False
+    # Ordner aus Läufen vor dieser Version: fertig, wenn index.html da ist
+    # und der Post nicht in der alten failures.txt steht
+    title = folder.name.split(" - ", 1)[-1]
+    return (folder / "index.html").exists() and title not in old_failures
+
+
+def post_title(folder: Path, pid):
+    try:
+        return json.loads((folder / "post.json").read_text())["data"]["attributes"]["title"]
+    except Exception:
+        return f"Post {pid}"
+
+
 # ─── main ──────────────────────────────────────────────────────────
 
 def main():
@@ -425,16 +484,20 @@ def main():
     ap.add_argument("--browser", default="brave", help="Browser für Cookies (Standard: brave)")
     ap.add_argument("--profile", default=None, help="Browser-Profil (optional)")
     ap.add_argument("--keyring", default=None,
-                help="Keyring erzwingen: gnomekeyring, kwallet6, basictext (Standard: probieren)")
+                    help="Keyring erzwingen: gnomekeyring, kwallet6, basictext (Standard: probieren)")
     ap.add_argument("--cookies", help="Netscape cookies.txt statt Browser")
     ap.add_argument("--session-id", help="Wert des Cookies session_id")
     ap.add_argument("--no-video", action="store_true", help="Videos überspringen")
     ap.add_argument("--test", action="store_true",
-                    help="Testlauf: nur die ersten 3 Posts (= --limit 3)")
+                    help="Testlauf: nur die nächsten 3 offenen Posts (= --limit 3)")
     ap.add_argument("--limit", type=int, default=None,
-                    help="nur die ersten N Posts laden")
+                    help="nur die nächsten N offenen Posts laden")
     ap.add_argument("--list", action="store_true",
                     help="nur auflisten, welche Posts geladen würden (lädt nichts)")
+    ap.add_argument("--order", choices=["oldest", "newest"],
+                    help="oldest = älteste zuerst, newest = neueste zuerst (sonst Abfrage)")
+    ap.add_argument("--redo", action="store_true",
+                    help="auch schon fertige Posts nochmal prüfen/laden")
     ap.add_argument("--delay", type=float, default=1.5, help="Pause zwischen Posts (s)")
     args = ap.parse_args()
 
@@ -460,50 +523,94 @@ def main():
             post_ids.append(ident)
     course_title = course_title or "Patreon-Download"
     post_ids = list(dict.fromkeys(post_ids))   # Duplikate raus, Reihenfolge bleibt
-    total = len(post_ids)
+
+    # Nummern sind immer chronologisch (001 = ältester Post) und bleiben dadurch
+    # stabil, egal in welcher Reihenfolge geladen wird
+    chrono = oldest_first(session, post_ids)
+    number = {pid: i for i, pid in enumerate(chrono, 1)}
+    total = len(chrono)
 
     if args.list:
-        log(f"Kurs: {course_title} – {total} Posts")
-        for idx, pid in enumerate(post_ids, 1):
+        log(f"Kurs: {course_title} – {total} Posts (älteste zuerst)")
+        for pid in chrono:
             t = fetch_post(session, pid)["data"]["attributes"].get("title")
-            log(f"  {idx:03d}  {t}  (id {pid})")
+            log(f"  {number[pid]:03d}  {t}  (id {pid})")
             time.sleep(args.delay)
         return
 
-    limit = args.limit or (3 if args.test else None)
-    if limit:
-        post_ids = post_ids[:limit]
-        log(f"TESTLAUF: nur die ersten {len(post_ids)} von {total} Posts")
+    order = ask_order(args)
+    queue = chrono if order == "oldest" else list(reversed(chrono))
 
     outdir = Path(args.out).expanduser() / safe(course_title)
     outdir.mkdir(parents=True, exist_ok=True)
+    fail_file = outdir / "failures.txt"
+    old_failures = fail_file.read_text() if fail_file.exists() else ""
+
+    # Schon fertige Posts überspringen (und ggf. auf die feste Nummer umbenennen)
+    existing = scan_existing(outdir)
+    entries, todo = {}, []
+    for pid in queue:
+        f = existing.get(pid)
+        if f and not args.redo and is_done(f, old_failures):
+            title = post_title(f, pid)
+            target = outdir / f"{number[pid]:03d} - {safe(title)}"
+            if f != target and not target.exists():
+                f.rename(target)
+                f = target
+            (f / ".fertig").touch()
+            entries[number[pid]] = (f, title, [])
+        else:
+            todo.append(pid)
+
+    log(f"Kurs: {course_title} – {total} Posts, {len(entries)} schon fertig, "
+        f"{len(todo)} offen ({'älteste' if order == 'oldest' else 'neueste'} zuerst)")
+
+    limit = args.limit or (3 if args.test else None)
+    if limit:
+        todo = todo[:limit]
+        log(f"TESTLAUF: nur die nächsten {len(todo)} offenen Posts")
+    if not todo:
+        write_index(outdir, course_title, [entries[k] for k in sorted(entries)])
+        log(f"Nichts zu tun – alles fertig ✓  Öffnen: {outdir / 'index.html'}")
+        return
+    log(f"→ {outdir}")
+
     cookiefile = outdir / ".cookies.txt"
     write_cookiefile(session, cookiefile)
-    log(f"Kurs: {course_title} – {len(post_ids)} Posts → {outdir}")
-
-    entries, failures = [], []
+    failures = []
     try:
-        for idx, pid in enumerate(post_ids, 1):
+        for pid in todo:
+            n = number[pid]
             try:
-                folder, title, errs = process_post(session, pid, outdir, idx, args, cookiefile)
-                entries.append((folder, title, errs))
-                failures += [f"{idx:03d} {title}: {e}" for e in errs]
+                folder, title, errs = process_post(session, pid, outdir, n, args,
+                                                   cookiefile, existing.get(pid))
+                if errs:
+                    (folder / ".fehler").write_text("\n".join(errs) + "\n")
+                    (folder / ".fertig").unlink(missing_ok=True)
+                else:
+                    (folder / ".fertig").touch()
+                    (folder / ".fehler").unlink(missing_ok=True)
+                entries[n] = (folder, title, errs)
+                failures += [f"{n:03d} {title}: {e}" for e in errs]
             except Exception as e:
-                log(f"\n[{idx:03d}] Post {pid} FEHLER: {e}")
-                failures.append(f"{idx:03d} Post {pid}: {e}")
-            write_index(outdir, course_title, entries)   # nach jedem Post aktuell halten
+                log(f"\n[{n:03d}] Post {pid} FEHLER: {e}")
+                failures.append(f"{n:03d} Post {pid}: {e}")
+            # nach jedem Post aktuell halten
+            write_index(outdir, course_title, [entries[k] for k in sorted(entries)])
             time.sleep(args.delay)
+    except KeyboardInterrupt:
+        log("\nAbgebrochen – beim nächsten Start geht es beim nächsten offenen Post weiter.")
     finally:
         cookiefile.unlink(missing_ok=True)   # Session-Cookie nicht liegen lassen
 
-    fail_file = outdir / "failures.txt"
+    open_left = total - sum(1 for e in entries.values() if not e[2])
     if failures:
         fail_file.write_text("\n".join(failures) + "\n")
-        log(f"\nFertig mit {len(failures)} Fehler(n) → {fail_file}"
-            "\nEinfach nochmal starten: Vorhandenes wird übersprungen.")
+        log(f"\n{len(failures)} Fehler → {fail_file}"
+            "\nNochmal starten: fehlerhafte Posts werden erneut versucht.")
     else:
         fail_file.unlink(missing_ok=True)
-        log(f"\nFertig ✓  Öffnen: {outdir / 'index.html'}")
+    log(f"\nStand: {total - open_left}/{total} fertig.  Öffnen: {outdir / 'index.html'}")
 
 
 if __name__ == "__main__":
