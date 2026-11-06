@@ -40,7 +40,8 @@
       "inputs": {
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
-        "satty-src": "satty-src"
+        "satty-src": "satty-src",
+        "vimium-src": "vimium-src"
       }
     },
     "satty-src": {
@@ -56,6 +57,22 @@
       "original": {
         "owner": "Satty-org",
         "repo": "Satty",
+        "type": "github"
+      }
+    },
+    "vimium-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784954343,
+        "narHash": "sha256-7edFwPHISs/YUhqdOEcnDvREWuQx0uokSyyQBegeCMg=",
+        "owner": "philc",
+        "repo": "vimium",
+        "rev": "5aa29614bf1dce05e0d316f8c38722e17f9b38c3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "philc",
+        "repo": "vimium",
         "type": "github"
       }
     }

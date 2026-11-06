@@ -11,12 +11,17 @@
       url = "github:Satty-org/Satty";
       flake = false; # nur der Quellcode, wird in flake.lock gepinnt
     };
+    vimium-src = {
+      url = "github:philc/vimium";
+      flake = false; # nur der Quellcode, wird in flake.lock gepinnt
+    };
   };
 
   outputs = {
     nixpkgs,
     home-manager,
     satty-src,
+    vimium-src,
     ...
   }: let
     lib = nixpkgs.lib;
@@ -59,6 +64,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              extraSpecialArgs = {inherit vimium-src;}; # in allen Home-Manager-Modulen verfügbar
               users.marc = import ./home/base.nix; # Workstation-Teil hängt profiles/workstation.nix an
               backupFileExtension = "backup";
             };

@@ -1,8 +1,31 @@
 {
   pkgs,
   lib,
+  vimium-src, # kommt aus flake.nix (extraSpecialArgs), Version steht in flake.lock
   ...
-}: {
+}: let
+  # Eigene Vimium-Optionen; werden als Vimiums Standardwerte eingebaut.
+  # Nicht in der Vimium-Optionsseite ändern, sondern hier.
+  vimiumSettings = {
+    keyMappings = ''
+      unmap p
+      unmap P
+    '';
+  };
+
+  vimiumOverrides = pkgs.writeText "vimium-overrides.js" ''
+    Object.assign(Settings.defaultOptions, ${builtins.toJSON vimiumSettings});
+  '';
+
+  # Vimium-Quellcode + eigene Defaults → entpackte Extension (läuft auch auf file://)
+  vimium = pkgs.runCommand "vimium-declarative" {} ''
+    cp -r ${vimium-src} $out
+    chmod -R u+w $out
+    grep -q "defaultOptions," $out/lib/settings.js \
+      || { echo "Vimium: defaultOptions nicht gefunden – Patch prüfen"; exit 1; }
+    cat ${vimiumOverrides} >> $out/lib/settings.js
+  '';
+in {
   programs.brave = {
     enable = true;
     package = pkgs.brave;
@@ -14,7 +37,7 @@
       {id = "nngceckbapebfimnlniiiahkandclblb";} # Bitwarden
       {id = "jcokkipkhhgiakinbnnplhkdbjbgcgpe";} # uBlock-origin
       {id = "khncfooichmfjbepaaaebmommgaepoid";} # unHook
-      {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # vimium
+      # {id = "dbepggeogbaibhgnhhndojpepiihcmeb";} # vimium
       {id = "cakobppopkpmmglabcdcklncbckjpkcl";} # voila - KI
       {id = "hdojabcconedhifhdaeifnkdagccaflk";} # Youtube-Transcript Extractor
       {id = "omkfmpieigblcllmkgbflkikinpkodlk";} # enhanced-h264ify (AV1 blockieren)
@@ -25,7 +48,7 @@
       "--force-dark-mode"
       "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
       # Mehrere eigene Extensions: nur EIN --load-extension-Flag, Pfade per Komma trennen
-      "--load-extension=${./youtube-hl},${./tab-nav},${./readline-keys}"
+      "--load-extension=${./youtube-hl},${./tab-nav},${./readline-keys},${vimium}"
     ];
   };
 
