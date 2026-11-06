@@ -87,12 +87,40 @@ def make_session(args):
     elif sid:
         s.cookies.set("session_id", sid, domain=".patreon.com", path="/")
     else:
-        from yt_dlp.cookies import extract_cookies_from_browser
-        log(f"Lese Cookies aus {args.browser} …")
-        for c in extract_cookies_from_browser(args.browser, args.profile):
-            if c.domain.endswith("patreon.com"):
-                s.cookies.set_cookie(c)
+        for c in browser_cookies(args):
+            s.cookies.set_cookie(c)
     return s
+
+
+class _Quiet:
+    """Logger für yt-dlp: schluckt Meldungen beim Durchprobieren der Keyrings."""
+    def debug(self, *a, **k): pass
+    info = warning = error = debug
+    def progress_bar(self): return None
+
+
+def browser_cookies(args):
+    """Patreon-Cookies aus dem Browser lesen.
+
+    yt-dlp erkennt unter niri den Keyring nicht und nimmt BASICTEXT. Brave
+    verschlüsselt aber mit gnome-keyring (programs.niri aktiviert ihn).
+    Deshalb: erst automatisch, dann die Keyrings der Reihe nach probieren,
+    bis das Login-Cookie session_id dabei ist."""
+    from yt_dlp.cookies import extract_cookies_from_browser
+    keyrings = [args.keyring.upper()] if args.keyring else \
+        [None, "GNOMEKEYRING", "KWALLET6", "KWALLET5", "BASICTEXT"]
+    for kr in keyrings:
+        try:
+            jar = extract_cookies_from_browser(args.browser, args.profile,
+                                               _Quiet(), keyring=kr)
+        except Exception:
+            continue
+        cookies = [c for c in jar if c.domain.endswith("patreon.com")]
+        if any(c.name == "session_id" for c in cookies):
+            log(f"Cookies aus {args.browser} gelesen (Keyring: {kr or 'automatisch'})")
+            return cookies
+    log(f"Kein Login-Cookie in {args.browser} gefunden.")
+    return []
 
 
 def write_cookiefile(session, path: Path):
@@ -156,10 +184,26 @@ def download(session, url, dest: Path):
 
 def check_login(session):
     r = get(session, API + "/current_user")
-    if r.status_code != 200:
-        sys.exit("Nicht eingeloggt – Cookies prüfen (siehe --help).")
-    name = r.json()["data"]["attributes"].get("full_name", "?")
-    log(f"Eingeloggt als: {name}")
+    if r.status_code == 200:
+        name = r.json()["data"]["attributes"].get("full_name", "?")
+        log(f"Eingeloggt als: {name}")
+        return
+
+    # ── Diagnose: warum klappt der Login nicht? ──
+    names = {c.name for c in session.cookies}
+    server = r.headers.get("server", "?")
+    log("Nicht eingeloggt. Diagnose:")
+    log(f"  Patreon-Cookies gefunden: {len(names)}")
+    log(f"  session_id vorhanden:     {'ja' if 'session_id' in names else 'NEIN'}")
+    log(f"  Antwort:                  HTTP {r.status_code} (Server: {server})")
+    log(f"  Inhalt:                   {r.text[:200]!r}")
+    if "session_id" not in names:
+        log("→ Brave-Cookies konnten nicht gelesen werden. Weg: --cookies cookies.txt")
+    elif r.status_code == 403 and "cloudflare" in server.lower():
+        log("→ Cloudflare blockt das Skript (Bot-Schutz), nicht dein Login.")
+    else:
+        log("→ Cookie da, aber abgelehnt: in Brave einmal aus- und wieder einloggen.")
+    sys.exit(1)
 
 
 def fetch_post(session, post_id):
@@ -380,6 +424,8 @@ def main():
                     help="Zielordner (Standard: ~/Patreon)")
     ap.add_argument("--browser", default="brave", help="Browser für Cookies (Standard: brave)")
     ap.add_argument("--profile", default=None, help="Browser-Profil (optional)")
+    ap.add_argument("--keyring", default=None,
+                help="Keyring erzwingen: gnomekeyring, kwallet6, basictext (Standard: probieren)")
     ap.add_argument("--cookies", help="Netscape cookies.txt statt Browser")
     ap.add_argument("--session-id", help="Wert des Cookies session_id")
     ap.add_argument("--no-video", action="store_true", help="Videos überspringen")
