@@ -17,8 +17,11 @@ ctrl + b        gehe Wort Ri Zeilenende
 ctrl + f        gehe Wort Ri Zeilenanfang
 
 ## Delete words
-ctrl + w        lösche Wort vor Cursor (Ri Zeilenanfang)
-alt + d         lösche Wrot hinter Cursor (Ri Zeilenende) 
+ctrl + w            lösche Wort vor Cursor (Ri Zeilenanfang)
+alt + backspace     lösche Wort vor Cursor (Ri Zeilenanfang)
+alt+ctrl+h          lösche Wort vor Cursor (Ri Zeilenanfang)
+
+alt + d             lösche Wrot hinter Cursor (Ri Zeilenende) 
 
 ## externe Bildschirme
 ### Bild

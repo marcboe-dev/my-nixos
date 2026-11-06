@@ -69,8 +69,8 @@
   # Layout selbst: niri in config/niri/config.kdl, qtile in system/desktop/qtile.nix.
   console.keyMap = "de-latin1-nodeadkeys";
 
-  # Caps Lock: click once = Esc, hold = Ctrl
-  # Auch am Server praktisch, wenn man direkt davorsitzt (Notfall-Konsole).
+  # Caps Lock: tippen = Esc, halten = Ctrl
+  #   + Caps+h = Backspace, Caps+m = Enter, Caps+l = Delete
   services.keyd = {
     enable = true;
     keyboards.default = {
@@ -80,6 +80,11 @@
         main = {
           capslock = "overload(control, esc)";
           "j+k" = "esc";
+        };
+        control = {
+          h = "backspace";
+          m = "enter";
+          l = "delete";
         };
       };
     };

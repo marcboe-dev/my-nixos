@@ -11,6 +11,8 @@
       unmap p
       unmap P
     '';
+    newTabDestination = "customUrl";
+    newTabCustomUrl = "https://duckduckgo.com/";
   };
 
   vimiumOverrides = pkgs.writeText "vimium-overrides.js" ''

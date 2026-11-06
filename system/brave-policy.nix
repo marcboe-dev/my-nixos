@@ -1,35 +1,36 @@
-{ ... }:
-
-{
+{...}: {
   environment.etc."brave/policies/managed/policy.json".text = builtins.toJSON {
     # --- Brave-Extras aus ---
-    BraveRewardsDisabled     = true;
-    BraveWalletDisabled      = true;
-    BraveVPNDisabled         = true;
-    BraveAIChatEnabled       = false;   # Leo
-    BraveNewsDisabled        = true;
-    BraveTalkDisabled        = true;
-    BraveSpeedreaderEnabled  = false;
-    TorDisabled              = true;
+    BraveRewardsDisabled = true;
+    BraveWalletDisabled = true;
+    BraveVPNDisabled = true;
+    BraveAIChatEnabled = false; # Leo
+    BraveNewsDisabled = true;
+    BraveTalkDisabled = true;
+    BraveSpeedreaderEnabled = false;
+    TorDisabled = true;
 
     # --- Telemetrie aus ---
-    BraveP3AEnabled          = false;
-    BraveStatsPingEnabled    = false;
+    BraveP3AEnabled = false;
+    BraveStatsPingEnabled = false;
     BraveWebDiscoveryEnabled = false;
-    MetricsReportingEnabled  = false;
+    MetricsReportingEnabled = false;
 
     # --- Allgemein ---
-    BrowserSignin            = 0;       # no google in Browser
-    SpellcheckEnabled        = true;
-    SpellcheckLanguage       = [ "de-AT" "en-US" ];
+    BrowserSignin = 0; # no google in Browser
+    SpellcheckEnabled = true;
+    SpellcheckLanguage = ["de-AT" "en-US"];
 
-    # --- Suchmaschine: DuckDuckGo ---          
-    DefaultSearchProviderEnabled    = true;
-    DefaultSearchProviderName       = "DuckDuckGo";
-    DefaultSearchProviderKeyword    = "ddg";
-    DefaultSearchProviderSearchURL  = "https://duckduckgo.com/?q={searchTerms}";
+    # --- Suchmaschine: DuckDuckGo ---
+    DefaultSearchProviderEnabled = true;
+    DefaultSearchProviderName = "DuckDuckGo";
+    DefaultSearchProviderKeyword = "ddg";
+    DefaultSearchProviderSearchURL = "https://duckduckgo.com/?q={searchTerms}";
     DefaultSearchProviderSuggestURL = "https://duckduckgo.com/ac/?q={searchTerms}&type=list";
-    DefaultSearchProviderIconURL    = "https://duckduckgo.com/favicon.ico";
+    DefaultSearchProviderIconURL = "https://duckduckgo.com/favicon.ico";
+
+    # --- Neuer Tab: DuckDuckGo statt brave://newtab (dort läuft Vimium nicht) ---
+    NewTabPageLocation = "https://duckduckgo.com/";
 
     # no Brave PW-Manager
     PasswordManagerEnabled = false;
