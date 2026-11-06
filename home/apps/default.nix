@@ -8,5 +8,6 @@
     ./celluloid.nix
     ./imv.nix
     ./google-drive.nix
+    ./patreon-dl
   ];
 }
