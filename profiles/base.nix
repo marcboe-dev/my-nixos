@@ -70,7 +70,7 @@
   console.keyMap = "de-latin1-nodeadkeys";
 
   # Caps Lock: tippen = Esc, halten = Ctrl
-  #   + Caps+h = Backspace, Caps+m = Enter, Caps+l = Delete
+  #   + Caps+h = Backspace, Caps+m = Enter
   services.keyd = {
     enable = true;
     keyboards.default = {
@@ -85,7 +85,6 @@
         control = {
           h = "backspace";
           m = "enter";
-          l = "delete";
         };
         nav = {
           h = "left";

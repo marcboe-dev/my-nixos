@@ -10,7 +10,10 @@
     keyMappings = ''
       unmap p
       unmap P
+      unmap J
+      unmap K
       map gs focusScrollable
+      map v visualHints
     '';
     newTabDestination = "customUrl";
     newTabCustomUrl = "https://duckduckgo.com/";
@@ -33,6 +36,10 @@
       || { echo "Vimium: allCommands-Export nicht gefunden – Patch prüfen"; exit 1; }
     cat ${./vimium-scroll-picker/command.js} >> $out/background_scripts/all_commands.js
     cat ${./vimium-scroll-picker/picker.js} >> $out/content_scripts/mode_normal.js
+
+    # Eigener Befehl "visualHints": Surfingkeys-artiger Visual-Mode (siehe ./vimium-visual-hints/)
+    cat ${./vimium-visual-hints/command.js} >> $out/background_scripts/all_commands.js
+    cat ${./vimium-visual-hints/picker.js} >> $out/content_scripts/mode_normal.js
   '';
 in {
   programs.brave = {
@@ -57,7 +64,7 @@ in {
       "--force-dark-mode"
       "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
       # Mehrere eigene Extensions: nur EIN --load-extension-Flag, Pfade per Komma trennen
-      "--load-extension=${./tab-nav},${./readline-keys},${vimium}"
+      "--load-extension=${./tab-nav},${./readline-keys},${./youtube-speed},${vimium}"
     ];
   };
 
