@@ -10,6 +10,7 @@
     keyMappings = ''
       unmap p
       unmap P
+      map gs focusScrollable
     '';
     newTabDestination = "customUrl";
     newTabCustomUrl = "https://duckduckgo.com/";
@@ -26,6 +27,12 @@
     grep -q "defaultOptions," $out/lib/settings.js \
       || { echo "Vimium: defaultOptions nicht gefunden – Patch prüfen"; exit 1; }
     cat ${vimiumOverrides} >> $out/lib/settings.js
+
+    # Eigener Befehl "focusScrollable": Hints auf scrollbare Bereiche (siehe ./vimium-scroll-picker/)
+    grep -q "^export { allCommands };" $out/background_scripts/all_commands.js \
+      || { echo "Vimium: allCommands-Export nicht gefunden – Patch prüfen"; exit 1; }
+    cat ${./vimium-scroll-picker/command.js} >> $out/background_scripts/all_commands.js
+    cat ${./vimium-scroll-picker/picker.js} >> $out/content_scripts/mode_normal.js
   '';
 in {
   programs.brave = {
@@ -50,7 +57,7 @@ in {
       "--force-dark-mode"
       "--disable-features=TouchpadOverscrollHistoryNavigation,UseChromeOSDirectVideoDecoder,OutdatedBuildDetector"
       # Mehrere eigene Extensions: nur EIN --load-extension-Flag, Pfade per Komma trennen
-      "--load-extension=${./youtube-hl},${./tab-nav},${./readline-keys},${vimium}"
+      "--load-extension=${./tab-nav},${./readline-keys},${vimium}"
     ];
   };
 
