@@ -24,12 +24,14 @@ in {
 
   # mpv-Keybinds im vim-Stil
   xdg.configFile."celluloid/input.conf".text = ''
-    h seek -5
+        h seek -5
     l seek 5
     H seek -30
     L seek 30
     j add volume -5
     k add volume 5
+    J add speed -0.05
+    K add speed 0.05
     0 seek 0 absolute
     ? script-binding stats/display-page-4-toggle
     = set speed 1.0

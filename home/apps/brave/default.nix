@@ -14,6 +14,7 @@
       unmap K
       map gs focusScrollable
       map v visualHints
+      map s searchSelection
     '';
     newTabDestination = "customUrl";
     newTabCustomUrl = "https://duckduckgo.com/";
@@ -40,6 +41,10 @@
     # Eigener Befehl "visualHints": Surfingkeys-artiger Visual-Mode (siehe ./vimium-visual-hints/)
     cat ${./vimium-visual-hints/command.js} >> $out/background_scripts/all_commands.js
     cat ${./vimium-visual-hints/picker.js} >> $out/content_scripts/mode_normal.js
+
+    # Eigener Befehl "searchSelection": Markierung/Kopiertes suchen (siehe ./vimium-search-selection/)
+    cat ${./vimium-search-selection/command.js} >> $out/background_scripts/all_commands.js
+    cat ${./vimium-search-selection/search.js} >> $out/content_scripts/mode_normal.js
   '';
 in {
   programs.brave = {

@@ -151,6 +151,7 @@
 
   HUD.copyToClipboard = async function (text) {
     const value = text.replace(/\xa0/g, " "); // wie Vimium: geschützte Leerzeichen → normale
+    this.lastCopiedText = value; // ← neu: für searchSelection
     try {
       await navigator.clipboard.writeText(value); // 1. direkt aus der Seite
       return;
