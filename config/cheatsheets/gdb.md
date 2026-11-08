@@ -13,6 +13,9 @@ refresh
 ## Breakpoint
 break+<linenumber>
 
+## Cycle through code
+next || n
+
 ## Print
 print <variable-name>
 

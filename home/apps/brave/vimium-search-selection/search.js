@@ -3,18 +3,9 @@
 //  * Normal-Mode: s, dann Taste → sucht die Markierung oder den zuletzt kopierten Text (y, yy …)
 //  * Visual-/Caret-Mode: sg, sd, … direkt → sucht die aktuelle Markierung
 (() => {
-  // Kürzel → [Name, Such-URL]; hier einfach Einträge ergänzen oder ändern
-  const ENGINES = {
-    g: ["Google", "https://www.google.com/search?q="],
-    d: ["DuckDuckGo", "https://duckduckgo.com/?q="],
-    h: ["GitHub", "https://github.com/search?q="],
-    y: ["YouTube", "https://www.youtube.com/results?search_query="],
-    e: ["Wikipedia", "https://de.wikipedia.org/w/index.php?search="],
-    s: ["StackOverflow", "https://stackoverflow.com/search?q="],
-    n: ["Nix-Pakete", "https://search.nixos.org/packages?query="],
-    o: ["NixOS-Optionen", "https://search.nixos.org/options?query="],
-    m: ["Home-Manager", "https://home-manager-options.extranix.com/?query="],
-  };
+  // Kürzel → [Name, Such-URL]. Die Liste steht in ../default.nix (searchEngines)
+  // und wird beim Build für @ENGINES@ eingesetzt – hier nichts eintragen.
+  const ENGINES = Object.fromEntries(@ENGINES@.map((e) => [e.key, [e.name, e.url]]));
 
   // lastCopiedText setzt der Clipboard-Fix in vimium-visual-hints/picker.js
   const lastCopied = () => (HUD.lastCopiedText || "").trim();

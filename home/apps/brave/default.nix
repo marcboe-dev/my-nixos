@@ -4,6 +4,97 @@
   vimium-src, # kommt aus flake.nix (extraSpecialArgs), Version steht in flake.lock
   ...
 }: let
+  # Suchmaschinen – EINE Liste für beides:
+  #  * Omnibar:          !<key> suchbegriff
+  #  * searchSelection:  s, dann <key> (Kleinbuchstabe = neuer Tab, Großbuchstabe = aktueller Tab)
+  # key muss ein einzelner Kleinbuchstabe sein (searchSelection liest nur eine Taste).
+  # Reihenfolge = Reihenfolge in der searchSelection-Anzeige.
+  searchEngines = [
+    {
+      key = "g";
+      name = "Google";
+      url = "https://www.google.com/search?q=";
+    }
+    {
+      key = "d";
+      name = "DuckDuckGo";
+      url = "https://duckduckgo.com/?q=";
+    }
+    {
+      key = "h";
+      name = "GitHub";
+      url = "https://github.com/search?q=";
+    }
+    {
+      key = "c";
+      name = "GitHub-Code";
+      url = "https://github.com/search?type=code&q=";
+    }
+    {
+      key = "y";
+      name = "YouTube";
+      url = "https://www.youtube.com/results?search_query=";
+    }
+    {
+      key = "e";
+      name = "Wikipedia";
+      url = "https://de.wikipedia.org/w/index.php?search=";
+    }
+    {
+      key = "s";
+      name = "StackOverflow";
+      url = "https://stackoverflow.com/search?q=";
+    }
+    {
+      key = "a";
+      name = "ArchWiki";
+      url = "https://wiki.archlinux.org/index.php?search=";
+    }
+    {
+      key = "k";
+      name = "Google-Maps";
+      url = "https://www.google.com/maps?q=";
+    }
+    {
+      key = "n";
+      name = "Nix-Pakete";
+      url = "https://search.nixos.org/packages?query=";
+    }
+    {
+      key = "o";
+      name = "NixOS-Optionen";
+      url = "https://search.nixos.org/options?query=";
+    }
+    {
+      key = "m";
+      name = "Home-Manager";
+      url = "https://home-manager-options.extranix.com/?query=";
+    }
+    {
+      key = "w";
+      name = "NixOS-Wiki";
+      url = "https://wiki.nixos.org/w/index.php?search=";
+    }
+  ];
+
+  # Prüft beim Build: Einzelbuchstabe, keine doppelten Kürzel
+  checkedEngines = let
+    keys = map (e: e.key) searchEngines;
+  in
+    assert lib.all (k: builtins.match "[a-z]" k != null) keys
+    || throw "searchEngines: key muss ein einzelner Kleinbuchstabe sein";
+    assert lib.length keys
+    == lib.length (lib.unique keys)
+    || throw "searchEngines: doppeltes Kürzel"; searchEngines;
+
+  # search.js mit der Liste von oben (Platzhalter @ENGINES@)
+  searchSelectionJs = let
+    src = builtins.readFile ./vimium-search-selection/search.js;
+  in
+    assert lib.hasInfix "@ENGINES@" src
+    || throw "search.js: Platzhalter @ENGINES@ fehlt";
+      pkgs.writeText "search.js"
+      (builtins.replaceStrings ["@ENGINES@"] [(builtins.toJSON checkedEngines)] src);
   # Eigene Vimium-Optionen; werden als Vimiums Standardwerte eingebaut.
   # Nicht in der Vimium-Optionsseite ändern, sondern hier.
   vimiumSettings = {
@@ -18,6 +109,13 @@
     '';
     newTabDestination = "customUrl";
     newTabCustomUrl = "https://duckduckgo.com/";
+
+    # Standardsuche der Omnibar (o/O). Vimium-Default wäre Google.
+    # Mit DuckDuckGo funktionieren zusätzlich alle DDG-Bangs, die unten nicht stehen.
+    searchUrl = "https://duckduckgo.com/?q=";
+
+    # Omnibar-Kürzel: "!y lofi" → YouTube. Erzeugt aus searchEngines (siehe oben im let).
+    searchEngines = lib.concatMapStrings (e: "!${e.key}: ${e.url}%s ${e.name}\n") checkedEngines;
   };
 
   vimiumOverrides = pkgs.writeText "vimium-overrides.js" ''
@@ -44,7 +142,7 @@
 
     # Eigener Befehl "searchSelection": Markierung/Kopiertes suchen (siehe ./vimium-search-selection/)
     cat ${./vimium-search-selection/command.js} >> $out/background_scripts/all_commands.js
-    cat ${./vimium-search-selection/search.js} >> $out/content_scripts/mode_normal.js
+    cat ${searchSelectionJs} >> $out/content_scripts/mode_normal.js
   '';
 in {
   programs.brave = {
