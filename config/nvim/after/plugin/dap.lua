@@ -105,6 +105,58 @@ vim.fn.sign_define("DapLogPoint", { text = "◉", texthl = "DiagnosticInfo" })
 vim.fn.sign_define("DapBreakpointRejected", { text = "○", texthl = "DiagnosticHint" })
 vim.fn.sign_define("DapStopped", { text = "▶", texthl = "DiagnosticOk", linehl = "Visual" })
 
+-- ── Quick Debug: aktuelle Datei kompilieren + sofort debuggen ────────
+-- debug-counter.c  →  gcc -g -Wall -Wextra debug-counter.c -o debug-counter
+local show_warnings = true -- <leader>bW schaltet um (aus = ohne Hinweise üben)
+
+local function quick_debug()
+    local ext = vim.fn.expand("%:e")
+    if ext ~= "c" and ext ~= "cpp" then
+        dap.continue() -- keine C/C++-Datei → normales Launch-Menü
+        return
+    end
+
+    vim.cmd("silent write")
+
+    local src = vim.fn.expand("%:p")
+    local exe = vim.fn.expand("%:p:r")
+    local cmd = { (ext == "c") and "gcc" or "g++", "-g", src, "-o", exe }
+    if show_warnings then
+        table.insert(cmd, 3, "-Wall")
+        table.insert(cmd, 4, "-Wextra")
+    end
+
+    local out = vim.fn.system(cmd)
+    if vim.v.shell_error ~= 0 then
+        vim.notify("Compile failed:\n" .. out, vim.log.levels.ERROR)
+        return
+    end
+    if show_warnings and out ~= "" then
+        vim.notify("Warnings:\n" .. out, vim.log.levels.WARN)
+    end
+
+    last_program = exe
+    dap.run({
+        name = "Quick Debug",
+        type = "codelldb",
+        request = "launch",
+        program = exe,
+        cwd = vim.fn.expand("%:p:h"),
+        stopOnEntry = false,
+        args = {},
+        terminal = "integrated",
+    })
+end
+
+-- F11: keine Session → Quick Debug, sonst → Continue
+local function go()
+    if dap.session() then
+        dap.continue()
+    else
+        quick_debug()
+    end
+end
+
 -- ── Keybinds ─────────────────────────────────────────────────────────
 -- Steppen auf F-Tasten: ein Tastendruck, funktioniert zuverlässig in
 -- kitty, alacritty und tmux
@@ -118,7 +170,12 @@ vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Start/Continue" })
 vim.keymap.set("n", "<F8>", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
 vim.keymap.set("n", "<F9>", dap.step_out, { desc = "Debug: Step Out" })
 vim.keymap.set("n", "<F10>", dap.step_over, { desc = "Debug: Step Over" })
-vim.keymap.set("n", "<F11>", dap.continue, { desc = "Debug: Start/Continue" })
+vim.keymap.set("n", "<F11>", go, { desc = "Debug: Quick Debug / Continue" })
+vim.keymap.set("n", "<leader>bm", dap.continue, { desc = "Debug: Launch-Menü (Args, Attach)" })
+vim.keymap.set("n", "<leader>bW", function()
+    show_warnings = not show_warnings
+    vim.notify("Quick Debug Warnungen: " .. (show_warnings and "an" or "aus"))
+end, { desc = "Debug: Warnungen an/aus" })
 vim.keymap.set("n", "<F12>", dap.step_into, { desc = "Debug: Step Into" })
 
 -- Alles andere unter <leader>b ("bug"). NICHT <leader>d, das ist
