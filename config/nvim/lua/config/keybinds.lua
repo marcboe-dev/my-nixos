@@ -80,3 +80,9 @@ vim.keymap.set("n", "<leader>td", function()
     local on = vim.diagnostic.config().virtual_text
     vim.diagnostic.config({ virtual_text = not on })
 end, { desc = "Toggle diagnostics virtual text" })
+
+-- Pfeiltasten: zwischen Fenstern wechseln (Bewegen im Text mit hjkl)
+vim.keymap.set("n", "<Left>", "<C-w>h", { desc = "Fenster links" })
+vim.keymap.set("n", "<Down>", "<C-w>j", { desc = "Fenster unten" })
+vim.keymap.set("n", "<Up>", "<C-w>k", { desc = "Fenster oben" })
+vim.keymap.set("n", "<Right>", "<C-w>l", { desc = "Fenster rechts" })

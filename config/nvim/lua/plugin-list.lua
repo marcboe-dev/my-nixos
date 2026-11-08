@@ -16,4 +16,8 @@ return {
     "ojroques/vim-oscyank",
     "captbaritone/better-indent-support-for-php-with-html",
     "mikesmithgh/kitty-scrollback.nvim",
+    -- Debugging (Konfiguration: after/plugin/dap.lua)
+    "mfussenegger/nvim-dap",
+    "nvim-neotest/nvim-nio", -- wird von nvim-dap-ui benötigt
+    "rcarriga/nvim-dap-ui",
 }

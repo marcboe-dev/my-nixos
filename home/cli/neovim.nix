@@ -6,6 +6,7 @@
     alejandra #ersetzt nixpkgs-fmt
     clang-tools #clang-d + clang-format
     gdb
+    vscode-extensions.vadimcn.vscode-lldb.adapter # codelldb (Debug-Adapter für nvim-dap), liegt als `codelldb` im PATH
     nodejs
     gcc
     gnumake
