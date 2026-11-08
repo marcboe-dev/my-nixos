@@ -78,11 +78,11 @@
       settings = {
         global.chord_timeout = 70;
         main = {
-          capslock = "overload(control, esc)";
+          capslock = "overload(capsctrl, esc)";
           "j+k" = "esc";
           space = "lettermod(nav, space, 150, 200)";
         };
-        control = {
+        "capsctrl:C" = {
           h = "backspace";
           m = "enter";
         };
