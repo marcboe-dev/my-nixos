@@ -26,6 +26,7 @@ cmp.setup({
         completeopt = "menu,menuone,noinsert",
         autocomplete = false,
     },
+    view = { docs = { auto_open = false } },
     window = { documentation = cmp.config.window.bordered() },
     mapping = cmp.mapping.preset.insert({
         ["<CR>"] = cmp.mapping.confirm({ select = false }),
@@ -35,6 +36,9 @@ cmp.setup({
         ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
         ["<C-f>"] = cmp.mapping.scroll_docs(4),
         ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+        ["<C-d>"] = cmp.mapping(function()
+            if cmp.visible_docs() then cmp.close_docs() else cmp.open_docs() end
+        end, { "i" }),
         ["<Tab>"] = cmp.mapping(function(fallback)
             if cmp.visible() then cmp.select_next_item() else fallback() end
         end, { "i", "s" }),
@@ -45,6 +49,6 @@ cmp.setup({
     sources = {
         { name = "nvim_lsp" },
         { name = "path" },
-        { name = "buffer", keyword_length = 3 },
+        { name = "buffer",  keyword_length = 3 },
     },
 })

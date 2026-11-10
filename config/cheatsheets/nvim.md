@@ -1,6 +1,12 @@
 <space>             leader
 Ctrl+w              prefix
 
+## Definitionen anzeigen
+gd                  show definition
+
+## Pfad der aktuellen Datei anzeigen
+1+ctrl+g
+
 ## Telescope
 leader+fi           find in nvim directory
 
