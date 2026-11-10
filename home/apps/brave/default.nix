@@ -143,6 +143,15 @@
     # Eigener Befehl "searchSelection": Markierung/Kopiertes suchen (siehe ./vimium-search-selection/)
     cat ${./vimium-search-selection/command.js} >> $out/background_scripts/all_commands.js
     cat ${searchSelectionJs} >> $out/content_scripts/mode_normal.js
+
+    # Readline-Kürzel auch in der Vomnibar (o/O): Die Vomnibar ist eine eigene
+    # chrome-extension://-Seite, dort laufen Content-Scripts anderer Extensions nicht.
+    # Deshalb readline.js direkt in die Vomnibar-Seite einbauen.
+    grep -q '<script type="module" src="vomnibar_page.js"></script>' $out/pages/vomnibar_page.html \
+      || { echo "Vimium: vomnibar_page.js-Tag nicht gefunden – Patch prüfen"; exit 1; }
+    cp ${./readline-keys/readline.js} $out/pages/readline.js
+    sed -i 's|<script type="module" src="vomnibar_page.js"></script>|<script src="readline.js"></script>\n    &|' \
+      $out/pages/vomnibar_page.html
   '';
 in {
   programs.brave = {

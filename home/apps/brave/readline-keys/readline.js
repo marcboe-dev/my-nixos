@@ -53,6 +53,7 @@ document.addEventListener("keydown", (e) => {
   else if (e.altKey && !e.ctrlKey && k === "f") action = "forward";
   else if (e.altKey && !e.ctrlKey && k === "d") action = "killword";
   else if (e.altKey && !e.ctrlKey && k === "backspace") action = "killback";
+  else if (e.ctrlKey && e.altKey && e.code === "KeyH") action = "killback";
   if (!action) return;
 
   const el = deepActive();
