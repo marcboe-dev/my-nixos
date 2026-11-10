@@ -101,6 +101,7 @@
     keyMappings = ''
       unmap p
       unmap P
+      map p pasteIntoInput
       unmap J
       unmap K
       map gs focusScrollable
@@ -126,6 +127,10 @@
   vimium = pkgs.runCommand "vimium-declarative" {} ''
     cp -r ${vimium-src} $out
     chmod -R u+w $out
+    # clipboardRead: Zwischenablage ohne Rückfrage lesen (für pasteIntoInput)
+    grep -q '"permissions": \[' $out/manifest.json \
+      || { echo "Vimium: permissions-Liste nicht gefunden – Patch prüfen"; exit 1; }
+    sed -i 's|"permissions": \[|&\n    "clipboardRead",|' $out/manifest.json
     grep -q "defaultOptions," $out/lib/settings.js \
       || { echo "Vimium: defaultOptions nicht gefunden – Patch prüfen"; exit 1; }
     cat ${vimiumOverrides} >> $out/lib/settings.js
@@ -148,10 +153,14 @@
     # chrome-extension://-Seite, dort laufen Content-Scripts anderer Extensions nicht.
     # Deshalb readline.js direkt in die Vomnibar-Seite einbauen.
     grep -q '<script type="module" src="vomnibar_page.js"></script>' $out/pages/vomnibar_page.html \
-      || { echo "Vimium: vomnibar_page.js-Tag nicht gefunden – Patch prüfen"; exit 1; }
+    || { echo "Vimium: vomnibar_page.js-Tag nicht gefunden – Patch prüfen"; exit 1; }
     cp ${./readline-keys/readline.js} $out/pages/readline.js
     sed -i 's|<script type="module" src="vomnibar_page.js"></script>|<script src="readline.js"></script>\n    &|' \
       $out/pages/vomnibar_page.html
+
+    # Eigener Befehl "pasteIntoInput": p = wie gi + Zwischenablage einfügen (siehe ./vimium-paste-input/)
+    cat ${./vimium-paste-input/command.js} >> $out/background_scripts/all_commands.js
+    cat ${./vimium-paste-input/paste.js} >> $out/content_scripts/mode_normal.js
   '';
 in {
   programs.brave = {
