@@ -95,6 +95,8 @@
       (gtk_accel_path "<Actions>/ThunarWindow/reload" "F5")
       (gtk_accel_path "<Actions>/ThunarWindow/open-parent" "<Primary><Alt>h")
       (gtk_accel_path "<Actions>/ThunarActionManager/open" "<Primary><Alt>l")
+      (gtk_accel_path "<Actions>/ThunarStandardView/back" "<Shift>h")
+      (gtk_accel_path "<Actions>/ThunarStandardView/forward" "<Shift>l")
     '';
 
     xdg.configFile."xfce4/helpers.rc".text = ''
