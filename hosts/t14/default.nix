@@ -16,4 +16,7 @@
     speakerCard = "alsa_card.pci-0000_00_1f.3-platform-skl_hda_dsp_generic";
     dpi = 120; # nur qtile: 96 = 100 %, 120 = 125 %, 144 = 150 %
   };
+
+  # Zugriff aufs Tailnet (SSH zum Server). Kein Exit Node in der VM.
+  services.tailscale.enable = true;
 }

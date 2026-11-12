@@ -93,4 +93,6 @@ in {
   #   nixos-rebuild switch --flake .#nixos-server --target-host marc@nixos-server --sudo --ask-sudo-password
   # Dafür muss marc Pakete auf den Server kopieren dürfen.
   nix.settings.trusted-users = ["@wheel"];
+
+  environment.enableAllTerminfo = true; # kitty, alacritty usw. per SSH nutzbar
 }
