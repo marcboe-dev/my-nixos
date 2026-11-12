@@ -16,7 +16,11 @@
 # Maschinenspezifisches (Wake-on-LAN-Interface, Akku-Ladegrenzen) steht
 # NICHT hier, sondern in hosts/<n>/default.nix.
 # ─────────────────────────────────────────────────────────────────────
-{lib, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   # Erlaubte SSH-Schlüssel: jede Datei keys/*.pub im Repo.
   # Neuen Rechner berechtigen: dessen ~/.ssh/id_ed25519.pub als
   # keys/<rechner>.pub ins Repo legen, committen, Server neu bauen.
@@ -94,5 +98,9 @@ in {
   # Dafür muss marc Pakete auf den Server kopieren dürfen.
   nix.settings.trusted-users = ["@wheel"];
 
-  environment.enableAllTerminfo = true; # kitty, alacritty usw. per SSH nutzbar
+  # Terminaldaten von kitty und alacritty, damit top/nvim/tmux per SSH funktionieren
+  environment.systemPackages = [
+    pkgs.kitty.terminfo
+    pkgs.alacritty.terminfo
+  ];
 }
