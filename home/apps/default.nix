@@ -9,5 +9,7 @@
     ./imv.nix
     ./google-drive.nix
     ./patreon-dl
+    ./qbittorrent.nix
+    ./qbittorrent.nix
   ];
 }
