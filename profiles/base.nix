@@ -34,6 +34,7 @@
 
   # ── Netzwerk ─────────────────────────────────────────
   networking.networkmanager.enable = true;
+  services.resolved.enable = true; # DNS zentral verwalten; Tailscale/NordVPN tragen sich sauber ein
 
   # ── Zeit & Sprache ───────────────────────────────────
   time.timeZone = "Europe/Vienna";
