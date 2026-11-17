@@ -36,7 +36,7 @@
       url = "https://www.youtube.com/results?search_query=";
     }
     {
-      key = "e";
+      key = "w";
       name = "Wikipedia";
       url = "https://de.wikipedia.org/w/index.php?search=";
     }
@@ -71,9 +71,9 @@
       url = "https://home-manager-options.extranix.com/?query=";
     }
     {
-      key = "w";
-      name = "NixOS-Wiki";
-      url = "https://wiki.nixos.org/w/index.php?search=";
+      key = "t";
+      name = "Übersetzen";
+      url = "https://www.dict.cc/?s=";
     }
   ];
 

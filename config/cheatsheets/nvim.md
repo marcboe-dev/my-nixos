@@ -18,6 +18,11 @@ ctrl+n              evoke auto-suggestion from variables from file
 ## Jumplist
 ctrl+i/o            wechselt zwischen letztem Fenster hin und her
 
+## Harpoon
+leader+a            setzt file auf harpoon list
+ctrl+n/p            wechselt zwischen markern
+ctrl+e              öffnet kleines Fenster: mit dd Einträge aus Harpoon löschen
+
 ## Marks
 m+<CAP LETTER>      setzt marker (zB mH)
 'H                  springt von überall zurück ins File
