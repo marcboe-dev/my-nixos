@@ -194,7 +194,7 @@ binds {
 
     // GUI-Apps (jeder Tastendruck = neues Fenster)
     Mod+Alt+B        hotkey-overlay-title="Browser: Brave" { spawn "brave"; }
-    Mod+Alt+Shift+B  hotkey-overlay-title="Kurz googlen (Brave App-Fenster)" { spawn "brave" "--app=https://www.google.com"; }
+    Mod+G            hotkey-overlay-title="Kurz googlen (Brave App-Fenster)" { spawn "brave" "--app=https://www.google.com"; }
     Mod+Alt+O        hotkey-overlay-title="Obsidian (öffnen/fokussieren)" { spawn "dfr-launch-or-focus" r#"^md\.obsidian\.Obsidian$"# "obsidian"; }
     Mod+Alt+F        hotkey-overlay-title="Dateien: Thunar" { spawn "thunar"; }
     Mod+Alt+Shift+F  hotkey-overlay-title="Dateien: Thunar (schwebend)" { spawn "dfr-float-spawn" "^thunar$" "50%" "60%" "thunar"; }

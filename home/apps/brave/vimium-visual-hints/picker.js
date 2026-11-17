@@ -161,3 +161,82 @@
     for (const ms of [50, 200, 500, 1000]) setTimeout(() => refocusPage(this), ms); // … + Fokus retten
   };
 })();
+
+// ---- Fix: Bildschirm folgt der Markierung im Visual-/Caret-Mode (wie beim Markieren mit der Maus) ----
+// Vimium scrollt nur, wenn das *ganze Element* mit dem Cursor außerhalb des Fensters liegt, und
+// misst dabei am Browserfenster. Bei langen Absätzen/Containern (z.B. claude.ai, wo nur ein
+// innerer Bereich scrollt) passiert deshalb nichts, und die Markierung läuft unten aus dem Bild.
+// Hier: Position des Cursors selbst (Selection-Focus) messen und jeden scrollbaren Vorfahren
+// so weit scrollen, dass er mit etwas Abstand zum Rand sichtbar bleibt (wie Vims scrolloff).
+(() => {
+  const MARGIN = 0.2; // Abstand zum Rand: 20 % der sichtbaren Höhe (deckt auch Overlays wie Eingabeboxen ab)
+
+  // Rechteck genau an der Cursorposition (Ende der Markierung, an dem gerade bewegt wird)
+  function focusRect(sel) {
+    const range = document.createRange();
+    try {
+      range.setStart(sel.focusNode, sel.focusOffset);
+      range.collapse(true);
+    } catch (_) { return null; }
+    const r = range.getClientRects()[0] || range.getBoundingClientRect();
+    if (r && (r.width || r.height || r.top || r.left)) return r;
+    // Fallback (z.B. Cursor zwischen zwei Elementen): Element an der Position nehmen
+    const node = sel.focusNode;
+    const el = node.nodeType === Node.ELEMENT_NODE
+      ? (node.childNodes[sel.focusOffset] || node.childNodes[sel.focusOffset - 1] || node)
+      : node.parentElement;
+    if (!el) return null;
+    const rects = (el.nodeType === Node.ELEMENT_NODE ? el : el.parentElement).getClientRects();
+    return rects[rects.length - 1] || null;
+  }
+
+  function isScrollable(el, axis) {
+    const style = getComputedStyle(el);
+    const overflow = axis === "y" ? style.overflowY : style.overflowX;
+    const size = axis === "y" ? el.scrollHeight > el.clientHeight : el.scrollWidth > el.clientWidth;
+    return size && /(auto|scroll|overlay)/.test(overflow);
+  }
+
+  // Sichtbarer Bereich eines Scroll-Containers, beschnitten aufs Fenster
+  function visibleBox(el) {
+    if (el === document.scrollingElement || el === document.documentElement || el === document.body) {
+      return { top: 0, bottom: innerHeight, left: 0, right: innerWidth };
+    }
+    const b = el.getBoundingClientRect();
+    return {
+      top: Math.max(b.top, 0), bottom: Math.min(b.top + el.clientHeight, innerHeight),
+      left: Math.max(b.left, 0), right: Math.min(b.left + el.clientWidth, innerWidth),
+    };
+  }
+
+  function delta(lo, hi, boxLo, boxHi, marginFrac) {
+    const m = Math.min((boxHi - boxLo) * marginFrac, 150);
+    if (hi > boxHi - m) return hi - (boxHi - m);
+    if (lo < boxLo + m) return lo - (boxLo + m);
+    return 0;
+  }
+
+  Movement.prototype.scrollIntoView = function () {
+    const sel = this.selection;
+    if (!sel || sel.type === "None" || !sel.focusNode) return;
+    const start = sel.focusNode.nodeType === Node.ELEMENT_NODE ? sel.focusNode : sel.focusNode.parentElement;
+    if (!start) return;
+
+    // Vom Cursor nach außen: jeden scrollbaren Container nachziehen, zuletzt die Seite selbst
+    const containers = [];
+    for (let el = start; el && el !== document.documentElement && el !== document.body; el = el.parentElement) {
+      if (isScrollable(el, "y") || isScrollable(el, "x")) containers.push(el);
+    }
+    containers.push(document.scrollingElement || document.documentElement);
+
+    for (const el of containers) {
+      const r = focusRect(sel);
+      if (!r) return;
+      const box = visibleBox(el);
+      if (box.bottom <= box.top) continue;
+      const dy = delta(r.top, r.bottom, box.top, box.bottom, MARGIN);
+      const dx = delta(r.left, r.right, box.left, box.right, 0.05);
+      if (dy || dx) el.scrollBy({ top: dy, left: dx, behavior: "instant" });
+    }
+  };
+})();
