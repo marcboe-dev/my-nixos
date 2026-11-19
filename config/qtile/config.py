@@ -98,6 +98,9 @@ keys = [
         Key([mod], "g", lazy.spawn(["brave", "--app=https://www.google.com"]),
             desc="Kurz googlen (Brave App-Fenster)"),
         Key([], "Print", lazy.spawn("flameshot gui"), desc="Screenshot: Region"),
+        # ── Workspaces wie in niri ───────────────────────────────────────
+        Key([mod], "u", lazy.screen.prev_group(), desc="Workspace links"),
+        Key([mod], "i", lazy.screen.next_group(), desc="Workspace rechts"),
 ]
 
 # Programme mit Super+Alt (links, mod1) ODER Super+AltGr (rechts, mod3)
