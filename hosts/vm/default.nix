@@ -9,6 +9,14 @@
   my.desktop = "qtile";
   my.terminal = "alacritty";
 
+  # Wie kanata auf dem Host (VMware greift die Tasten VOR kanata ab):
+  # linke Alt der Aula sendet ralt → als echtes Alt behandeln,
+  # rechte Strg wird AltGr (für @ { [ ] } \ ~).
+  services.keyd.keyboards.default.settings.main = {
+    rightalt = "layer(alt)";
+    rightcontrol = "layer(altgr)";
+  };
+
   networking.networkmanager.insertNameservers = ["1.1.1.1" "9.9.9.9"];
 
   virtualisation.vmware.guest.enable = true; # copying from host to vm

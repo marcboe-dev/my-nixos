@@ -95,6 +95,8 @@ keys = [
 
         # ── Sonstiges ────────────────────────────────────────────────────
         Key([mod, "control"], "b", lazy.hide_show_bar("top"), desc="Bar ein/aus"),
+        Key([mod], "g", lazy.spawn(["brave", "--app=https://www.google.com"]),
+            desc="Kurz googlen (Brave App-Fenster)"),
         Key([], "Print", lazy.spawn("flameshot gui"), desc="Screenshot: Region"),
 ]
 
@@ -156,8 +158,12 @@ for i in groups:
             # ),
             # Or, use below if you prefer not to switch to that group.
             # # mod + shift + group number = move focused window to group
-            Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-                desc="move focused window to group {}".format(i.name)),
+            Key(
+                [mod, "shift"],
+                i.name,
+                lazy.window.togroup(i.name, switch_group=True),
+                desc=f"Move focused window to group {i.name} and follow it",
+            ),
         ]
     )
 
