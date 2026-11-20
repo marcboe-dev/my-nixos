@@ -1,4 +1,4 @@
-{...}: {
+{lib, ...}: {
   imports = [
     ./hardware-configuration.nix
     ../../profiles/workstation.nix
@@ -19,4 +19,5 @@
 
   # Zugriff aufs Tailnet (SSH zum Server). Kein Exit Node in der VM.
   services.tailscale.enable = true;
+  systemd.services.tailscaled.wantedBy = lib.mkForce []; # nicht beim Boot starten
 }

@@ -91,7 +91,6 @@ in {
       pkgs.pavucontrol # grafischer Audio-Manager
       pkgs.brightnessctl
       pkgs.overskride # grafischer Bluetooth-Manager
-      pkgs.nordvpn
       pkgs.libnotify
       tvHz # Fernseher-Hz durchschalten (Mod+Alt+T)
       pkgs.wdisplays # grafische Bildschirm-Anordnung (temporär, Feste Werte in niri config.kdl)
@@ -129,24 +128,12 @@ in {
       powerOnBoot = true;
     };
 
+    # WLAN-Stromsparen aus: verhindert Latenzspitzen/Aussetzer bei Intel-WLAN (wichtig fürs VPN)
+    networking.networkmanager.wifi.powersave = false;
+
     # NordVPN-Dienst
-    systemd.services.nordvpnd = {
-      description = "NordVPN daemon";
-      wantedBy = ["multi-user.target"];
-      after = ["network-online.target"];
-      wants = ["network-online.target"];
-
-      serviceConfig = {
-        ExecStart = "${pkgs.nordvpn}/bin/nordvpnd";
-        Restart = "on-failure";
-
-        User = "root";
-        Group = "nordvpn";
-
-        RuntimeDirectory = "nordvpn";
-        RuntimeDirectoryMode = "0770";
-      };
-    };
+    services.nordvpn.enable = true;
+    users.users.marc.extraGroups = ["nordvpn"];
 
     # Benachrichtigung bei niedrigem Akku (qtile)
     # Unter niri warnt noctalia selbst (config/noctalia/config.toml → [battery]).

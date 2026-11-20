@@ -53,7 +53,6 @@
   };
 
   # ── Benutzer ─────────────────────────────────────────
-  users.groups.nordvpn = {};
 
   users.users."marc" = {
     isNormalUser = true;
@@ -61,7 +60,6 @@
     extraGroups = [
       "networkmanager"
       "wheel"
-      "nordvpn"
     ];
   };
 
