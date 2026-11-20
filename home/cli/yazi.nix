@@ -29,7 +29,7 @@
       # rmpc ist ein TUI -> block = true, damit es im Yazi-Terminal läuft
       opener.music = [
         {
-          run = "rmpc";
+          run = "rmpc-open %s"; # vorher: run = "rmpc";
           block = true;
           desc = "rmpc öffnen";
           for = "unix";

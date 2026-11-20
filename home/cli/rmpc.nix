@@ -2,8 +2,28 @@
   config,
   pkgs,
   ...
-}: {
-  home.packages = [pkgs.rmpc];
+}: let
+  # Zusätzlicher Unix-Socket: nur darüber erlaubt mpd file://-URIs,
+  # also Dateien AUSSERHALB von ~/Music (z. B. ~/Documents/guitar/...)
+  mpdSocket = "${config.services.mpd.dataDir}/socket";
+
+  # Von yazi als Opener genutzt: Queue leeren, gewählte Datei(en) rein,
+  # abspielen, dann rmpc öffnen
+  rmpc-open = pkgs.writeShellApplication {
+    name = "rmpc-open";
+    runtimeInputs = [pkgs.mpc pkgs.coreutils pkgs.rmpc];
+    text = ''
+      export MPD_HOST="${mpdSocket}"
+      mpc -q clear
+      for f in "$@"; do
+        mpc -q add "file://$(realpath "$f")"
+      done
+      mpc -q play
+      exec rmpc
+    '';
+  };
+in {
+  home.packages = [pkgs.rmpc pkgs.mpc rmpc-open];
 
   # Upstream-.desktop hat kein Icon → gleichnamig überschreiben
   xdg.desktopEntries.rmpc = {
@@ -25,6 +45,7 @@
         name "PipeWire"
       }
       auto_update "yes"
+      bind_to_address "${mpdSocket}"
     '';
   };
 

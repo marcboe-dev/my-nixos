@@ -1,4 +1,4 @@
-// YouTube: Shift+j / Shift+k = Wiedergabegeschwindigkeit -/+ 0.05
+// YouTube: Shift+j / Shift+k = Wiedergabegeschwindigkeit -/+ 0.05, "=" = zurück auf 1.0
 // Vimium hat J/K per unmap freigegeben, siehe ../default.nix
 const STEP = 0.05;
 const MIN_RATE = 0.1;
@@ -24,9 +24,11 @@ const showRate = (rate) => {
 };
 
 window.addEventListener("keydown", (e) => {
-  if (!e.shiftKey || e.altKey || e.ctrlKey || e.metaKey) return;
-  const step = e.code === "KeyK" ? STEP : e.code === "KeyJ" ? -STEP : 0;
-  if (!step || isEditable(document.activeElement)) return;
+  if (e.altKey || e.ctrlKey || e.metaKey) return;
+  // "=" über e.key statt e.code: layoutunabhängig (DE: Shift+0, US: eigene Taste)
+  const reset = e.key === "=";
+  const step = !e.shiftKey ? 0 : e.code === "KeyK" ? STEP : e.code === "KeyJ" ? -STEP : 0;
+  if ((!reset && !step) || isEditable(document.activeElement)) return;
 
   const video = document.querySelector("video");
   if (!video) return;
@@ -35,7 +37,9 @@ window.addEventListener("keydown", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
 
-  const rate = Math.min(MAX_RATE, Math.max(MIN_RATE, Math.round((video.playbackRate + step) * 100) / 100));
+  const rate = reset
+    ? 1
+    : Math.min(MAX_RATE, Math.max(MIN_RATE, Math.round((video.playbackRate + step) * 100) / 100));
   video.playbackRate = rate;
   showRate(rate);
 }, true);
