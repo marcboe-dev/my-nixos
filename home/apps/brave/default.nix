@@ -136,8 +136,8 @@
     cat ${vimiumOverrides} >> $out/lib/settings.js
 
     # Eigener Befehl "focusScrollable": Hints auf scrollbare Bereiche (siehe ./vimium-scroll-picker/)
-    grep -q "^export { allCommands };" $out/background_scripts/all_commands.js \
-      || { echo "Vimium: allCommands-Export nicht gefunden – Patch prüfen"; exit 1; }
+    grep -q "^export { list };" $out/background_scripts/all_commands.js \
+      || { echo "Vimium: list-Export nicht gefunden – Patch prüfen"; exit 1; }
     cat ${./vimium-scroll-picker/command.js} >> $out/background_scripts/all_commands.js
     cat ${./vimium-scroll-picker/picker.js} >> $out/content_scripts/mode_normal.js
 
