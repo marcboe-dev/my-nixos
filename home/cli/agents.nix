@@ -14,7 +14,11 @@
 #   chmod 600 ~/.config/secrets/anthropic-api-key
 # Alternative ohne Datei: `opencode auth login`.
 # ─────────────────────────────────────────────────────────────────────
-{config, ...}: let
+{
+  config,
+  pkgs,
+  ...
+}: let
   keyFile = "${config.home.homeDirectory}/.config/secrets/anthropic-api-key";
 in {
   programs.opencode = {
@@ -62,5 +66,10 @@ in {
     fi
   '';
 
-  programs.bash.shellAliases.oc = "opencode";
+  programs.bash.shellAliases = {
+    oc = "opencode";
+    cj = "cd ~/repos/ai-job-search && nix develop -c claude";
+  };
+
+  home.packages = [pkgs.claude-code];
 }
