@@ -26,7 +26,6 @@ in {
   imports = [
     ./desktop
     ./apps
-    ./cli/rmpc.nix # Musik-Client + mpd: braucht Audio, nur hier
   ];
 
   xdg.configFile =
@@ -46,5 +45,10 @@ in {
     automount = true;
     notify = true;
     tray = "never"; # kein Tray nötig
+  };
+
+  programs.texlive = {
+    enable = true;
+    extraPackages = tpkgs: {inherit (tpkgs) scheme-full latexmk;};
   };
 }

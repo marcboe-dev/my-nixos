@@ -17,6 +17,7 @@ return {
     "captbaritone/better-indent-support-for-php-with-html",
     "mikesmithgh/kitty-scrollback.nvim",
     "MeanderingProgrammer/render-markdown.nvim", -- Markdown (Tabellen, Überschriften …) im Buffer rendern
+    "lervag/vimtex",
     -- Debugging (Konfiguration: after/plugin/dap.lua)
     "mfussenegger/nvim-dap",
     "nvim-neotest/nvim-nio", -- wird von nvim-dap-ui benötigt

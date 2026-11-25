@@ -1,0 +1,3 @@
+vim.g.maplocalleader = ","          -- VimTeX-Mappings: ,ll  ,lv  ,lc ...
+vim.g.vimtex_view_method = "sioyek" -- PDF-Viewer mit Vorwärts-/Rückwärtssuche
+vim.g.vimtex_quickfix_mode = 0      -- Fehlerfenster nicht automatisch aufpoppen
