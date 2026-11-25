@@ -4,33 +4,32 @@
 # Ablegen unter: home/cli/agents.nix
 # Einbinden in:  home/cli/default.nix  →  imports = [ ... ./agents.nix ];
 #
+# Grundidee: opencode darf NICHTS ändern oder ausführen, ohne dass du
+# es im Terminal bestätigst. Nur Lesen ist frei.
+#
 # API-Key kommt NICHT ins Repo (der Nix-Store ist weltlesbar!).
 # Einmalig pro Rechner anlegen:
 #   mkdir -p ~/.config/secrets && chmod 700 ~/.config/secrets
 #   printf '%s' 'sk-ant-...' > ~/.config/secrets/anthropic-api-key
 #   chmod 600 ~/.config/secrets/anthropic-api-key
-# Alternative ohne Datei: `opencode auth login` (speichert den Key in
-# ~/.local/share/opencode/auth.json, ebenfalls außerhalb des Stores).
+# Alternative ohne Datei: `opencode auth login`.
 # ─────────────────────────────────────────────────────────────────────
-{
-  config,
-  pkgs,
-  ...
-}: let
+{config, ...}: let
   keyFile = "${config.home.homeDirectory}/.config/secrets/anthropic-api-key";
 in {
   programs.opencode = {
     enable = true;
 
-    # Gemeinsamer Kontext für den Agent (wird zu ~/.config/opencode/AGENTS.md)
+    # Globale Regeln: bewusst klein und projektunabhängig.
+    # Projektspezifischer Kontext (z.B. Lebenslauf) gehört in eine AGENTS.md
+    # im jeweiligen Projektordner, nicht hierher.
     rules = ''
-      # Kontext
-      - Das System ist NixOS (Flake, Home Manager). Dotfiles liegen in ~/nixos-dotfiles.
-      - Änderungen an der Config immer deklarativ in Nix machen, nie imperativ per
-        `nix-env` oder `nix profile`.
-      - Neue Dateien erst mit `git add` stagen, sonst sieht der Flake sie nicht.
-      - Nix-Code im Stil von alejandra formatieren.
-      - Antworten auf Deutsch, Code und Kommentare im Repo auf Deutsch.
+      # Arbeitsweise
+      - Ich entscheide, was geändert wird. Du schlägst vor, ich bestätige.
+      - Erst erklären, was du ändern willst und warum, dann ändern.
+      - Immer nur kleine, einzeln nachvollziehbare Änderungen.
+      - Nichts erfinden. Bei fehlenden Informationen nachfragen.
+      - Antworten auf Deutsch.
     '';
 
     settings = {
@@ -39,6 +38,15 @@ in {
       # Mit `opencode models` prüfen, ob die ID bei dir so verfügbar ist
       model = "anthropic/claude-sonnet-5-5";
       small_model = "anthropic/claude-haiku-5-5";
+
+      # Lesen/Suchen im Projekt ist immer erlaubt. Für alles, was etwas
+      # verändert oder nach außen geht, wird vorher gefragt:
+      permission = {
+        edit = "ask"; # Dateien ändern oder anlegen
+        bash = "ask"; # Shell-Befehle
+        webfetch = "ask"; # Webseiten abrufen
+      };
+      # Später lockern, z.B.: bash = { "*" = "ask"; "git status" = "allow"; "git diff*" = "allow"; };
 
       # Updates kommen über nixpkgs, nicht über opencode selbst
       autoupdate = false;
