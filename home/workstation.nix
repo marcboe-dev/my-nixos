@@ -49,6 +49,6 @@ in {
 
   programs.texlive = {
     enable = true;
-    extraPackages = tpkgs: {inherit (tpkgs) scheme-full latexmk;};
+    extraPackages = tpkgs: {inherit (tpkgs) scheme-full;};
   };
 }
