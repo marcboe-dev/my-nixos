@@ -1,9 +1,9 @@
-# Startmenü: p = Projects, s = Sessions, b = Bookmarks, d = Google Drive, c = Cook, g = Guitar
+# Startmenü: p = Projects, s = Sessions, b = Bookmarks, c = Cook, g = Guitar
 # Der Buchstabe in [] ist die Taste. "-matching prefix" matcht ab jeder
 # Wortgrenze (\b), deshalb trifft "s" auch "[S]essions". Wichtig: kein
 # anderes Wort darf mit demselben Buchstaben beginnen, sonst greift
 # -auto-select nicht mehr.
-choice="$(printf '%s\n' '[P]rojects' '[S]essions' '[B]ookmarks' '[D]rive' '[C]ook' '[G]uitar' \
+choice="$(printf '%s\n' '[P]rojects' '[S]essions' '[B]ookmarks' '[C]ook' '[G]uitar' \
   | rofi -dmenu -i -matching prefix -auto-select -no-custom -p 'Launch')" || exit 0
 
 # Muster in Anführungszeichen: ohne wären [P] usw. Glob-Zeichenklassen
@@ -11,7 +11,6 @@ case "$choice" in
   '[P]rojects')     exec rofi-repos ;;
   '[S]essions')     exec rofi-sessions ;;
   '[B]ookmarks')    exec rofi-bookmarks ;;
-  '[D]rive')        exec gdrive-bisync ;;
   '[C]ook')
     # Workspace darunter, dort Brave mit den Rezeptseiten + Terminal im Rezeptordner
     niri msg action focus-workspace-down
@@ -29,13 +28,13 @@ case "$choice" in
     ;;
   '[G]uitar')
     # Wie [C]ook: Workspace darunter, Brave mit den Gitarren-Videos + Terminal im Gitarrenordner
+    urls=(
+      'https://www.youtube.com/watch?v=tH_Hh5c_Jo8&list=PLjXfzplO1QXBBrblwYYiZ1wUWkbMt7-sQ&index=52' # Week7 TGIAY
+      'https://www.youtube.com/watch?v=kFbbyt6oAmk' # The Cowboy Rides Away
+      'https://www.youtube.com/watch?v=NeNBXDw5uE4' # 5 ESSENTIAL Hand and Finger Exercises
+    )
     niri msg action focus-workspace-down
-    setsid -f brave --new-window \
-      'https://www.youtube.com/watch?v=tH_Hh5c_Jo8&list=PLjXfzplO1QXBBrblwYYiZ1wUWkbMt7-sQ&index=52' \ # Week7 TGIAY
-      'https://www.youtube.com/watch?v=kFbbyt6oAmk' \ #The Cowboy Rides Away
-      'https://www.youtube.com/watch?v=NeNBXDw5uE4' \ #5 ESSENTIAL Hand and Finger Exercises for Guitarists
-
-      >/dev/null 2>&1
+    setsid -f brave --new-window "${urls[@]}" >/dev/null 2>&1
     sleep 0.5
     mkdir -p "$HOME/Documents/guitar"
     cd "$HOME/Documents/guitar"
