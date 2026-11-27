@@ -31,9 +31,10 @@ case "$choice" in
     # Wie [C]ook: Workspace darunter, Brave mit den Gitarren-Videos + Terminal im Gitarrenordner
     niri msg action focus-workspace-down
     setsid -f brave --new-window \
-      'https://www.youtube.com/watch?v=FLORjaPMUwI&list=PLjXfzplO1QXBBrblwYYiZ1wUWkbMt7-sQ&index=53' \
-      'https://www.youtube.com/watch?v=kFbbyt6oAmk' \
-      'https://www.youtube.com/watch?v=NeNBXDw5uE4' \
+      'https://www.youtube.com/watch?v=tH_Hh5c_Jo8&list=PLjXfzplO1QXBBrblwYYiZ1wUWkbMt7-sQ&index=52' \ # Week7 TGIAY
+      'https://www.youtube.com/watch?v=kFbbyt6oAmk' \ #The Cowboy Rides Away
+      'https://www.youtube.com/watch?v=NeNBXDw5uE4' \ #5 ESSENTIAL Hand and Finger Exercises for Guitarists
+
       >/dev/null 2>&1
     sleep 0.5
     mkdir -p "$HOME/Documents/guitar"

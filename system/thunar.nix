@@ -22,6 +22,18 @@
 
   programs.xfconf.enable = true;
   services.gvfs.enable = true;
+  # gvfs ohne FUSE-Mount starten: Thunar nutzt GIO direkt, ~/.gvfs bzw.
+  # /run/user/1000/gvfs wird nicht gebraucht und kann sonst "tot" hängen bleiben
+  # ("Transport endpoint is not connected" → Home lässt sich nicht öffnen).
+  systemd.user.services.gvfs-daemon.serviceConfig = {
+    # Reste von früher wegräumen (Fehler ignorieren, falls nichts da ist)
+    ExecStartPre = [
+      "-/run/wrappers/bin/fusermount3 -uz %h/.gvfs"
+      "-${pkgs.coreutils}/bin/rmdir %h/.gvfs"
+    ];
+    ExecStart = ["" "${config.services.gvfs.package}/libexec/gvfsd --no-fuse"];
+  };
+
   services.tumbler.enable = true;
 
   environment.systemPackages = with pkgs; [
