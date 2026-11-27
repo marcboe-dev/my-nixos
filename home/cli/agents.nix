@@ -27,7 +27,7 @@ in {
     # Globale Regeln: bewusst klein und projektunabhängig.
     # Projektspezifischer Kontext (z.B. Lebenslauf) gehört in eine AGENTS.md
     # im jeweiligen Projektordner, nicht hierher.
-    rules = ''
+    context = ''
       # Arbeitsweise
       - Ich entscheide, was geändert wird. Du schlägst vor, ich bestätige.
       - Erst erklären, was du ändern willst und warum, dann ändern.

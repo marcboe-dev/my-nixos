@@ -50,6 +50,7 @@ in
       noctaliaPatched # Bar / Shell (Erinnerungen in min/h/Tagen), wird in config.kdl gestartet
       swaybg # Wallpaper unter Wayland
       wl-clipboard # wl-copy für tmux (Ctrl+Shift+Enter)
+      wl-kbptr # Mauszeiger per Tastatur (Mod+A-Familie in config.kdl), mit OpenCV-Erkennung
       (mkScript "dfr-screenshot" [grim slurp jq wl-clipboard satty coreutils procps])
       (mkScript "dfr-float-spawn" [jq coreutils])
       (mkScript "dfr-launch-or-focus" [jq])

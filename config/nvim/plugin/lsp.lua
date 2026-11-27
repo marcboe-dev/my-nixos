@@ -168,7 +168,12 @@ vim.lsp.config['nil_ls'] = {
         ['nil'] = {
             formatting = {
                 command = { "alejandra" }
-            }
+            },
+            nix = {
+                flake = {
+                    autoArchive = true, -- fehlende Flake-Inputs ohne Nachfrage holen
+                },
+            },
         }
     }
 }

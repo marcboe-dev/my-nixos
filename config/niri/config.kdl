@@ -232,6 +232,13 @@ binds {
     Ctrl+Print       hotkey-overlay-title="Screenshot: Monitor (fokussiert)" { spawn "dfr-screenshot" "monitor-focused"; }
     Ctrl+Shift+Print hotkey-overlay-title="Screenshot: alle Monitore" { spawn "dfr-screenshot" "monitor-all"; }
 
+// ------------------------------------------------------------------------
+    //  MAUS PER TASTATUR  —  wl-kbptr  (Mod+A-Familie, Backspace = Schritt zurück, Esc = Abbruch)
+    // ------------------------------------------------------------------------
+    // Klickbare Elemente erkennen → Label tippen → Linksklick
+    Mod+A            hotkey-overlay-title="Maus: Element anklicken (wl-kbptr)" { spawn "wl-kbptr" "-o" "modes=floating,click" "-o" "mode_floating.source=detect"; }
+    // Raster → danach verfeinern; Enter = Zeiger hinsetzen, g/h/b = Links-/Rechts-/Mittelklick
+    Mod+Alt+A        hotkey-overlay-title="Maus: Raster + Feinwahl (wl-kbptr)" { spawn "wl-kbptr" "-o" "modes=tile,bisect"; }
 
     // ------------------------------------------------------------------------
     //  FENSTER — GRUNDAKTIONEN  (Mod = Basis, Shift = Variante)
